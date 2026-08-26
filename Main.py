@@ -1,22 +1,39 @@
-import requests
+from flask import Flask, render_template
+from app.services.orders_service import (
+    obtener_clientes,
+    obtener_aplicaciones,
+    obtener_desarrolladores,
+    obtener_detalles_proyecto
+)
 
-project_ref = "flyznurbkihesnylrwov"
-api_key = "sb_publishable_E7bpFRnkfmdcV8ouIUEJrQ_tDUxF2sF"
+app = Flask(__name__, template_folder='app/templates')
 
-url = f"https://{project_ref}.supabase.co/rest/v1/"
+@app.route('/')
+def home():
+    return render_template('home.html')
 
-headers = {
-    "apikey": api_key,
-    "Authorization": f"Bearer {api_key}"
-}
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
-try:
-    response = requests.get(url, headers=headers)
-   
-    if response.status_code in (200, 401):
-        print("Conexión exitosa")
-    else:
-        print(f"Error en la conexión. Código: {response.status_code}")
-       
-except requests.exceptions.RequestException as e:
-    print(f"Error al conectar: {e}")
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+@app.route('/success')
+def success():
+    return render_template('sucess.html')
+
+@app.route('/portafolio')
+def portafolio():
+    apps = obtener_aplicaciones()
+    return render_template('portafolio/index.html', aplicaciones=apps)
+
+@app.route('/portafolio/detalle/<int:id_app>')
+def portafolio_detalle(id_app):
+    detalles = obtener_detalles_proyecto()
+    equipo = [d for d in detalles if d.get('id_app') == id_app]
+    return render_template('portafolio/detail.html', equipo=equipo, id_app=id_app)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
