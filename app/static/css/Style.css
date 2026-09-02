@@ -1,0 +1,87 @@
+:root {
+  --bg-dark: #0D0D38;
+  --card-bg: #333769;
+  --accent-purple: #5D5B9B;
+  --accent-soft: #BC92C0;
+  --text-light: #F4DAF6;
+  --text-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  background-color: var(--bg-dark);
+  border-bottom: 2px solid var(--accent-purple);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: var(--text-light);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 500;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+}
+
+.grid-apps {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card-app {
+  background-color: var(--card-bg);
+  border: 1px solid var(--accent-soft);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-title {
+  color: var(--text-light);
+  margin-top: 0;
+}
+
+.badge-dev {
+  background-color: var(--accent-purple);
+  color: var(--text-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin: 0.25rem 0.25rem 0 0;
+}
+
+.btn-primary {
+  display: block;
+  text-align: center;
+  background-color: var(--accent-purple);
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-soft);
+  color: var(--bg-dark);
+}

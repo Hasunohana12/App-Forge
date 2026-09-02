@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1 style="color: var(--text-light); text-align: center;">Aplicaciones & Desarrollo</h1>
+
+  <div class="grid-apps">
+    {% for app in aplicaciones %}
+    <div class="card-app">
+      <div>
+        <h3 class="card-title">{{ app.nombre }}</h3>
+        <p style="color: #E0E0E0; font-size: 0.9rem;">{{ app.descripcion }}</p>
+      </div>
+
+      <div style="border-top: 1px solid var(--accent-purple); padding-top: 0.75rem;">
+          <small style="color: var(--accent-soft);">Equipo de desarrollo:</small><br>
+        <span class="badge-dev">Desarrollador 1</span>
+        <span class="badge-dev">Desarrollador 2</span>
+
+        <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-primary">Ver Proyecto</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

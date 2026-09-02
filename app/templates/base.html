@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AppForge - Servicios de Desarrollo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Style.css') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <h2 style="color: var(--text-light); margin: 0;">AppForge</h2>
+    <div>
+      <a href="{{ url_for('home') }}">Inicio</a>
+      <a href="{{ url_for('portafolio') }}">Aplicaciones</a>
+      <a href="{{ url_for('contact') }}">Contacto</a>
+    </div>
+  </nav>
+
+  <main>
+    {% block content %}
+    <!-- Aquí se inyecta la vista que corresponda -->
+    {% endblock %}
+  </main>
+
+</body>
+</html>
