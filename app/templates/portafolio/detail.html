@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Proyecto - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Detalle del Proyecto #{{ id_app }}</div>
+
+    <div class="pill-subhead">Equipo Asignado</div>
+
+    {% if equipo %}
+        <ul class="team-list">
+            {% for miembro in equipo %}
+                <li>
+                    <strong>{{ miembro.nombre_desarrollador if miembro.nombre_desarrollador else 'Desarrollador' }}</strong>
+                    <span>{{ miembro.rol if miembro.rol else 'Colaborador' }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="text-box-purple">No hay miembros registrados para este proyecto.</div>
+    {% endif %}
+
+    <a href="{{ url_for('portafolio') }}" class="btn-arrow">Volver</a>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

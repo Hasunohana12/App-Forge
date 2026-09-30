@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Admin - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card app-card-wide">
+    <div class="pill-title">Gestión de Solicitudes y Proyectos</div>
+
+    <div style="width: 100%; text-align: right; margin-bottom: 10px;">
+        <a href="{{ url_for('admin_new_project') }}" class="btn-arrow" style="font-size: 0.85rem; padding: 8px 20px;">+ Nuevo Proyecto</a>
+    </div>
+
+    <div class="pill-subhead">Solicitudes Pendientes de Clientes</div>
+
+    {% if solicitudes %}
+        <ul class="team-list">
+            {% for pedido in solicitudes %}
+                <li>
+                    <div>
+                        <strong>{{ pedido.nombre_cliente }}</strong> — <span style="opacity: 0.8;">{{ pedido.email }}</span>
+                        <br><small>{{ pedido.detalles_app }}</small>
+                    </div>
+                    <a href="{{ url_for('admin_assign', id_app=pedido.id_app) }}" class="btn-arrow" style="font-size: 0.75rem; padding: 6px 15px;">Asignar Dev</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="text-box-purple">No hay solicitudes pendientes en este momento.</div>
+    {% endif %}
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

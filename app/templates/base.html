@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AppForge - Servicios de Desarrollo</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}App Forge{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <header>
+    <nav>
+        <div class="logo">
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='imagenes/logoApp.jpg') }}" alt="Logo App Forge" class="logo-img">
+                APP FORGE
+            </a>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Inicio</a></li>
+            <li><a href="{{ url_for('about') }}">Nosotros</a></li>
+            <li><a href="{{ url_for('portafolio') }}">Portafolio</a></li>
+            <li><a href="{{ url_for('contact') }}">Contacto</a></li>
+        </ul>
+    </nav>
+</header>
 
-  <nav class="navbar">
-    <h2 style="color: var(--text-light); margin: 0;">AppForge</h2>
-    <div>
-      <a href="{{ url_for('home') }}">Inicio</a>
-      <a href="{{ url_for('portafolio') }}">Aplicaciones</a>
-      <a href="{{ url_for('contact') }}">Contacto</a>
-    </div>
-  </nav>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
 
-  <main>
-    {% block content %}
-    <!-- Aquí se inyecta la vista que corresponda -->
-    {% endblock %}
-  </main>
+    <footer>
+        <p>&copy; 2026 APP FORGE. Todos los derechos reservados</p>
+    </footer>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

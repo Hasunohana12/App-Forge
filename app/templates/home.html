@@ -1,16 +1,37 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>App-Forge - Inicio</title>
-</head>
-<body>
-    <h1>¡Servidor Flask Funcionando!</h1>
-    <p>La base de datos y las rutas están conectadas correctamente.</p>
-    <ul>
-        <li><a href="/portafolio">Ver Portafolio</a></li>
-        <li><a href="/about">Nosotros</a></li>
-        <li><a href="/contact">Contacto</a></li>
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Inicio - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card app-card-wide">
+    <div class="pill-title">Nuestro lema es:</div>
+    
+    <div class="text-box-purple">
+        <h2>"Tecnología a tu servicio"</h2>
+    </div>
+
+    <div class="pill-title">Servicios que ofrecemos</div>
+
+    <div class="grid-cards">
+        <div class="card-item">
+            <h3>Desarrollo Web</h3>
+            <p>Plataformas modernas y escalables.</p>
+        </div>
+        <div class="card-item">
+            <h3>Bases de Datos</h3>
+            <p>Integración segura con Supabase.</p>
+        </div>
+        <div class="card-item">
+            <h3>Soporte App</h3>
+            <p>Mantenimiento continuo y garantía.</p>
+        </div>
+    </div>
+
+    <a href="{{ url_for('contact') }}" class="btn-arrow">Pedir Cotización</a>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

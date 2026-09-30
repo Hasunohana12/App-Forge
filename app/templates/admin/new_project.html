@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Proyecto - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Publicar en Portafolio</div>
+
+    <form action="{{ url_for('admin_new_project') }}" method="POST" class="form-group-custom">
+        <input type="text" name="nombre" class="input-capsule" placeholder="Nombre de la aplicación..." required>
+        <textarea name="descripcion" class="input-capsule" rows="3" placeholder="Descripción pública del proyecto..." required></textarea>
+        
+        <input type="date" name="fecha_inicio" class="input-capsule">
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--navy-blue); font-weight: bold;">
+            <input type="checkbox" id="es_publico" name="es_publico_portafolio" value="true" checked style="width: 18px; height: 18px; accent-color: var(--navy-blue);">
+            <label for="es_publico">Mostrar en Portafolio Público</label>
+        </div>
+
+        <div style="text-align: center; display: flex; gap: 10px; justify-content: center;">
+            <button type="submit" class="btn-arrow">Publicar</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-arrow" style="background-color: var(--purple-input);">Cancelar</a>
+        </div>
+    </form>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

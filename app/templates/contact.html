@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitar Proyecto - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Solicita tu Proyecto</div>
+
+    <form id="contact-form" action="{{ url_for('contact') }}" method="POST" class="form-group-custom">
+        <input type="text" name="nombre" class="input-capsule" placeholder="Tu nombre..." required>
+        <input type="email" name="email" class="input-capsule" placeholder="Tu correo (Gmail)..." required>
+        <input type="tel" name="telefono" class="input-capsule" placeholder="Teléfono de contacto...">
+        <textarea name="detalles" class="input-capsule" rows="3" placeholder="Detalles de la app que necesitas..." required></textarea>
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn-arrow">Enviar Solicitud</button>
+        </div>
+    </form>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("wl_QtPBH3gf582cBc");
+    })();
+
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        const form = this;
+
+        emailjs.sendForm('service_ykin98m', 'template_kxvqzi9', form)
+            .then(function() {
+                alert("¡Solicitud enviada correctamente! Revisa tu casilla de Gmail (o la carpeta Spam) para ver la confirmación.");
+                form.submit();
+            }, function(error) {
+                alert("Hubo un error al enviar la notificación por correo. Procesando solicitud...");
+                form.submit();
+            });
+    });
+</script>
+{% endblock %}

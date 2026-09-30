@@ -1,26 +1,29 @@
 {% extends "base.html" %}
 
+{% block title %}Portafolio - App Forge{% endblock %}
+
 {% block content %}
-<div class="container">
-  <h1 style="color: var(--text-light); text-align: center;">Aplicaciones & Desarrollo</h1>
+<div class="app-card app-card-wide">
+    <div class="pill-title">Portafolio de Proyectos</div>
 
-  <div class="grid-apps">
-    {% for app in aplicaciones %}
-    <div class="card-app">
-      <div>
-        <h3 class="card-title">{{ app.nombre }}</h3>
-        <p style="color: #E0E0E0; font-size: 0.9rem;">{{ app.descripcion }}</p>
-      </div>
+    {% if aplicaciones %}
+        <div class="grid-cards">
+            {% for app in aplicaciones %}
+            <div class="card-item">
+                <h3>{{ app.nombre if app.nombre else 'Proyecto #' ~ loop.index }}</h3>
+                <p>{{ app.descripcion if app.descripcion else 'Sin descripción.' }}</p>
+                <br>
+                <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-arrow" style="font-size: 0.8rem; padding: 6px 20px;">Ver Detalle</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-box-purple">No hay proyectos registrados en este momento.</div>
+    {% endif %}
 
-      <div style="border-top: 1px solid var(--accent-purple); padding-top: 0.75rem;">
-          <small style="color: var(--accent-soft);">Equipo de desarrollo:</small><br>
-        <span class="badge-dev">Desarrollador 1</span>
-        <span class="badge-dev">Desarrollador 2</span>
-
-        <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-primary">Ver Proyecto</a>
-      </div>
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
     </div>
-    {% endfor %}
-  </div>
 </div>
 {% endblock %}

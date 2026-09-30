@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Asignar Equipo - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Asignar Desarrollador</div>
+
+    <div class="text-box-purple" style="font-size: 0.95rem;">
+        Proyecto #{{ id_app }}
+    </div>
+
+    <form action="{{ url_for('admin_assign', id_app=id_app) }}" method="POST" class="form-group-custom">
+        
+        <select name="id_desarrollador" class="input-capsule" required style="background-color: var(--purple-input); cursor: pointer;">
+            <option value="" disabled selected>Selecciona un Programador...</option>
+            {% for dev in desarrolladores %}
+                <option value="{{ dev.id_desarrollador }}">{{ dev.nombre_completo }} ({{ dev.especialidad }})</option>
+            {% endfor %}
+        </select>
+
+        <input type="text" name="rol" class="input-capsule" placeholder="Rol en el proyecto (ej: Backend, UI/UX)..." required>
+        <input type="number" name="horas_dedicadas" class="input-capsule" placeholder="Horas estimadas..." min="1">
+
+        <div style="text-align: center; display: flex; gap: 10px; justify-content: center;">
+            <button type="submit" class="btn-arrow">Guardar</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-arrow" style="background-color: var(--purple-input);">Volver</a>
+        </div>
+    </form>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

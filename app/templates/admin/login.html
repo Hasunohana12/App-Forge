@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso Admin - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Panel Administrador:</div>
+
+    <form action="{{ url_for('admin_login') }}" method="POST" class="form-group-custom">
+        <input type="email" name="email" class="input-capsule" placeholder="correo corporativo..." required>
+        <input type="password" name="contrasena" class="input-capsule" placeholder="contraseña..." required>
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn-arrow">Ingresar</button>
+        </div>
+    </form>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}

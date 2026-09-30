@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Panel Dev - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card app-card-wide">
+    <div class="pill-title">Mis Proyectos Asignados</div>
+
+    {% if mis_proyectos %}
+        <ul class="team-list">
+            {% for item in mis_proyectos %}
+                <li>
+                    <div>
+                        <strong>{{ item.nombre_app }}</strong> — <span style="opacity: 0.8;">Rol: {{ item.rol }}</span>
+                        <br><small>Horas asignadas: {{ item.horas_dedicadas }} hrs</small>
+                    </div>
+                    <span class="btn-arrow" style="font-size: 0.75rem; padding: 6px 15px;">{{ item.estado }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="text-box-purple">No tienes proyectos asignados actualmente.</div>
+    {% endif %}
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}
