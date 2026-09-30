@@ -5,24 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}App Forge{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header>
-    <nav>
-        <div class="logo">
-            <a href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='imagenes/logoApp.jpg') }}" alt="Logo App Forge" class="logo-img">
-                APP FORGE
-            </a>
-        </div>
-        <ul>
-            <li><a href="{{ url_for('home') }}">Inicio</a></li>
-            <li><a href="{{ url_for('about') }}">Nosotros</a></li>
-            <li><a href="{{ url_for('portafolio') }}">Portafolio</a></li>
-            <li><a href="{{ url_for('contact') }}">Contacto</a></li>
-        </ul>
-    </nav>
-</header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='imagenes/logoApp.jpg') }}" alt="Logo App Forge" class="logo-img">
+                    APP FORGE
+                </a>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Inicio</a></li>
+                <li><a href="{{ url_for('about') }}">Nosotros</a></li>
+                <li><a href="{{ url_for('portafolio') }}">Portafolio</a></li>
+                <li><a href="{{ url_for('contact') }}">Contacto</a></li>
+                <li><a href="{{ url_for('login') }}">Iniciar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main class="container">
         {% block content %}{% endblock %}

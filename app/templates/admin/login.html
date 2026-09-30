@@ -1,23 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}Acceso Admin - App Forge{% endblock %}
+{% block title %}Iniciar Sesión - App Forge{% endblock %}
 
 {% block content %}
 <div class="app-card">
-    <div class="pill-title">Panel Administrador:</div>
+    <div class="pill-title">Acceso de Personal</div>
 
-    <form action="{{ url_for('admin_login') }}" method="POST" class="form-group-custom">
-        <input type="email" name="email" class="input-capsule" placeholder="correo corporativo..." required>
-        <input type="password" name="contrasena" class="input-capsule" placeholder="contraseña..." required>
+    <form id="login-form" action="{{ url_for('login') }}" method="POST" class="form-group-custom">
+        <select name="rol" id="rol-select" class="input-capsule" required onchange="toggleAdminKey()">
+            <option value="" disabled selected>Selecciona tu Rol...</option>
+            <option value="dev">Desarrollador</option>
+            <option value="admin">Administrador</option>
+        </select>
 
-        <div style="text-align: center;">
-            <button type="submit" class="btn-arrow">Ingresar</button>
+        <input type="email" name="email" class="input-capsule" placeholder="Tu correo corporativo..." required>
+        <input type="password" name="password" class="input-capsule" placeholder="Tu contraseña..." required>
+
+        <div id="admin-key-container" style="display: none;">
+            <input type="password" name="admin_key" id="admin_key" class="input-capsule" placeholder="Clave Maestra de Seguridad Admin...">
+        </div>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <button type="submit" class="btn-arrow">Ingresar al Sistema</button>
         </div>
     </form>
-
-    <div class="triangles-decoration">
-        <div class="triangle-up"></div>
-        <div class="triangle-down"></div>
-    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleAdminKey() {
+        const rol = document.getElementById('rol-select').value;
+        const adminKeyContainer = document.getElementById('admin-key-container');
+        const adminKeyInput = document.getElementById('admin_key');
+
+        if (rol === 'admin') {
+            adminKeyContainer.style.display = 'block';
+            adminKeyInput.setAttribute('required', 'true');
+        } else {
+            adminKeyContainer.style.display = 'none';
+            adminKeyInput.removeAttribute('required');
+            adminKeyInput.value = '';
+        }
+    }
+</script>
 {% endblock %}

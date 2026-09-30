@@ -37,11 +37,33 @@
 
         emailjs.sendForm('service_ykin98m', 'template_kxvqzi9', form)
             .then(function() {
-                alert("¡Solicitud enviada correctamente! Revisa tu casilla de Gmail (o la carpeta Spam) para ver la confirmación.");
-                form.submit();
+                Swal.fire({
+                    title: '¡Solicitud Enviada!',
+                    text: 'Revisa tu casilla de Gmail (o la carpeta Spam) para ver la confirmación.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#6B46C1',
+                    background: '#1A1F2C',
+                    color: '#FFFFFF'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             }, function(error) {
-                alert("Hubo un error al enviar la notificación por correo. Procesando solicitud...");
-                form.submit();
+                Swal.fire({
+                    title: 'Aviso de Notificación',
+                    text: 'Hubo un error al enviar la notificación por correo. Procesando solicitud...',
+                    icon: 'warning',
+                    confirmButtonText: 'Continuar',
+                    confirmButtonColor: '#6B46C1',
+                    background: '#1A1F2C',
+                    color: '#FFFFFF'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
     });
 </script>

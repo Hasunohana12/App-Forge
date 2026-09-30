@@ -1,7 +1,6 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 
-# Importamos las funciones necesarias desde tus servicios de Supabase
 from app.services.orders_service import (
     obtener_clientes, 
     obtener_aplicaciones, 
@@ -25,10 +24,6 @@ static_dir = os.path.join(base_dir, 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = 'super-secret-key-appforge'
-
-# ----------------------------------------------------
-# RUTAS PÚBLICAS (Cliente / Visitante)
-# ----------------------------------------------------
 
 @app.route('/')
 def home():
@@ -61,16 +56,35 @@ def portafolio_detalle(id_app):
     proyecto = obtener_proyecto_por_id(id_app)
     return render_template('portafolio/detail.html', proyecto=proyecto)
 
-# ----------------------------------------------------
-# RUTAS ADMINISTRADOR
-# ----------------------------------------------------
-
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
-        session['admin_user'] = request.form.get('email')
-        return redirect(url_for('admin_dashboard'))
+        rol = request.form.get('rol')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if rol == 'admin':
+            admin_key = request.form.get('admin_key')
+            master_key = os.getenv('ADMIN_MASTER_KEY', 'ForgeAdmin2026!')
+
+            if admin_key != master_key:
+                return render_template('admin/login.html', error="Clave Maestra de Administrador incorrecta.")
+
+            session['user'] = email
+            session['role'] = 'admin'
+            return redirect(url_for('admin_dashboard'))
+
+        elif rol == 'dev':
+            session['user'] = email
+            session['role'] = 'dev'
+            return redirect(url_for('dev_dashboard'))
+
     return render_template('admin/login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
@@ -100,10 +114,6 @@ def admin_new_project():
         return redirect(url_for('admin_dashboard'))
         
     return render_template('admin/new_project.html')
-
-# ----------------------------------------------------
-# RUTAS DESARROLLADOR
-# ----------------------------------------------------
 
 @app.route('/dev/dashboard')
 def dev_dashboard():
