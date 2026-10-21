@@ -22,13 +22,29 @@ def obtener_proyecto_por_id(id_app):
     datos = response.json() if response.status_code == 200 else []
     return datos[0] if datos else None
 
-def crear_nuevo_proyecto(nombre, descripcion, fecha_inicio, es_publico):
+def crear_nuevo_proyecto_completo(nombre, descripcion, estado, fecha_inicio, es_publico, dev_ids=None, portada=None, paneles=None):
     body = {
         "nombre": nombre,
         "descripcion": descripcion,
-        "fecha_inicio": fecha_inicio,
-        "es_publico_portafolio": es_publico,
-        "estado": "EN_PROGRESO"
+        "estado": estado if estado else "DISPONIBLE",
+        "fecha_inicio": fecha_inicio if fecha_inicio else None,
+        "es_publico_portafolio": bool(es_publico)
     }
+    
+    if portada and hasattr(portada, 'filename') and portada.filename != '':
+        body["imagen_url"] = portada.filename
+
     response = requests.post(f"{BASE_URL}/aplicacion", json=body, headers=HEADERS)
     return response.json() if response.status_code in (200, 201) else None
+
+def actualizar_proyecto(id_app, nombre, descripcion, estado, imagen_url, es_publico):
+    url = f"{BASE_URL}/aplicacion?id_app=eq.{id_app}"
+    body = {
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "estado": estado,
+        "imagen_url": imagen_url,
+        "es_publico_portafolio": es_publico
+    }
+    response = requests.patch(url, json=body, headers=HEADERS)
+    return response.json() if response.status_code == 200 else None

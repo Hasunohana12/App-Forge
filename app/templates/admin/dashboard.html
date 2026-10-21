@@ -1,36 +1,26 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard Admin - App Forge{% endblock %}
+﻿{% extends "base_dashboard.html" %}
 
 {% block content %}
 <div class="app-card app-card-wide">
-    <div class="pill-title">Gestión de Solicitudes y Proyectos</div>
-
-    <div style="width: 100%; text-align: right; margin-bottom: 10px;">
-        <a href="{{ url_for('admin_new_project') }}" class="btn-arrow" style="font-size: 0.85rem; padding: 8px 20px;">+ Nuevo Proyecto</a>
-    </div>
-
-    <div class="pill-subhead">Solicitudes Pendientes de Clientes</div>
+    <div class="pill-title">Gestión de Solicitudes</div>
 
     {% if solicitudes %}
-        <ul class="team-list">
-            {% for pedido in solicitudes %}
-                <li>
-                    <div>
-                        <strong>{{ pedido.nombre_cliente }}</strong> — <span style="opacity: 0.8;">{{ pedido.email }}</span>
-                        <br><small>{{ pedido.detalles_app }}</small>
-                    </div>
-                    <a href="{{ url_for('admin_assign', id_app=pedido.id_app) }}" class="btn-arrow" style="font-size: 0.75rem; padding: 6px 15px;">Asignar Dev</a>
-                </li>
+        <ul class="team-list" style="list-style: none; padding: 0; margin-top: 20px;">
+            {% for s in solicitudes %}
+            <li style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.7); border-radius: 12px; margin-bottom: 12px;">
+                <div>
+                    <strong style="color: #2b2a63; font-size: 1.05rem;">{{ s.nombre_cliente }}</strong>
+                    <span style="opacity: 0.8; font-size: 0.9rem;">({{ s.email }})</span>
+                    <br><small style="color: #444;">{{ s.detalles_app }}</small>
+                </div>
+                <a href="{{ url_for('admin_assign', id_app=s.id_app) }}" class="btn-arrow" style="font-size: 0.85rem; padding: 8px 18px;">Asignar Dev</a>
+            </li>
             {% endfor %}
         </ul>
     {% else %}
-        <div class="text-box-purple">No hay solicitudes pendientes en este momento.</div>
+        <div class="text-box-purple" style="text-align: center; margin-top: 20px;">
+            No hay solicitudes pendientes en este momento.
+        </div>
     {% endif %}
-
-    <div class="triangles-decoration">
-        <div class="triangle-up"></div>
-        <div class="triangle-down"></div>
-    </div>
 </div>
 {% endblock %}

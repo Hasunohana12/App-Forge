@@ -1,0 +1,50 @@
+﻿{% extends "base_dashboard.html" %}
+
+{% block title %}Proyectos - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card app-card-wide">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 15px;">
+        <div class="pill-title" style="margin: 0; text-align: left; width: auto;">Gestión de Aplicaciones</div>
+        <a href="{{ url_for('admin_new_project') }}" class="btn-arrow" style="font-size: 0.85rem; padding: 10px 22px;">+ Publicar Nueva App</a>
+    </div>
+
+    {% if proyectos %}
+        <div class="grid-cards" style="margin-top: 15px;">
+            {% for p in proyectos %}
+            <div class="card-item">
+                {% if p.imagen_url %}
+                    <img src="{{ p.imagen_url }}" alt="{{ p.nombre }}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--card-border);">
+                {% else %}
+                    <div style="width: 100%; height: 140px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+                        Sin imagen
+                    </div>
+                {% endif %}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="margin: 0; color: var(--navy-blue); font-size: 1.05rem;">{{ p.nombre }}</h3>
+                    <span class="badge-status {% if p.estado == 'DISPONIBLE' %}badge-free{% elif p.estado == 'VENDIDO' %}badge-sold{% else %}badge-dev{% endif %}">
+                        {{ p.estado|default('DISPONIBLE') }}
+                    </span>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; text-align: left; line-height: 1.3;">
+                    {{ p.descripcion }}
+                </p>
+
+                <div style="border-top: 1px solid var(--card-border); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">
+                        {% if p.es_publico_portafolio %}Público en Portafolio{% else %}Oculto{% endif %}
+                    </span>
+                    <a href="{{ url_for('admin_edit_project', id_app=p.id_app) }}" class="btn-arrow" style="font-size: 0.75rem; padding: 6px 14px;">Editar App</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-box-purple">
+            No hay proyectos publicados. Utiliza el botón superior para agregar el primero al portafolio.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

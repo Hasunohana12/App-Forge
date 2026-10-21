@@ -1,23 +1,35 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Iniciar Sesión - App Forge{% endblock %}
 
 {% block content %}
 <div class="app-card">
-    <div class="pill-title">Acceso de Personal</div>
+    <div class="pill-title" id="titulo-login">Acceso al Sistema</div>
+
+    {% if error %}
+        <div style="background-color: #ef4444; color: white; padding: 10px; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; font-size: 0.9rem;">
+            {{ error }}
+        </div>
+    {% endif %}
 
     <form id="login-form" action="{{ url_for('login') }}" method="POST" class="form-group-custom">
-        <select name="rol" id="rol-select" class="input-capsule" required onchange="toggleAdminKey()">
+        <select name="rol" id="rol-select" class="input-capsule" required onchange="actualizarCamposLogin()">
             <option value="" disabled selected>Selecciona tu Rol...</option>
+            <option value="cliente">Cliente</option>
             <option value="dev">Desarrollador</option>
             <option value="admin">Administrador</option>
         </select>
 
-        <input type="email" name="email" class="input-capsule" placeholder="Tu correo corporativo..." required>
-        <input type="password" name="password" class="input-capsule" placeholder="Tu contraseña..." required>
+        <input type="email" name="email" id="email-input" class="input-capsule" placeholder="Tu correo electrónico..." required>
+        
+        <div class="password-field-container">
+            <input type="password" name="password" id="password-input" class="input-capsule" placeholder="Tu contraseña..." required>
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('password-input', this)">VER</button>
+        </div>
 
-        <div id="admin-key-container" style="display: none;">
-            <input type="password" name="admin_key" id="admin_key" class="input-capsule" placeholder="Clave Maestra de Seguridad Admin...">
+        <div id="master-key-container" class="password-field-container" style="display: none; margin-top: 10px;">
+            <input type="password" name="master_key" id="master_key" class="input-capsule" placeholder="Clave Maestra de Seguridad Admin...">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('master_key', this)">VER</button>
         </div>
 
         <div style="text-align: center; margin-top: 15px;">
@@ -29,18 +41,41 @@
 
 {% block scripts %}
 <script>
-    function toggleAdminKey() {
+    function actualizarCamposLogin() {
         const rol = document.getElementById('rol-select').value;
-        const adminKeyContainer = document.getElementById('admin-key-container');
-        const adminKeyInput = document.getElementById('admin_key');
+        const keyContainer = document.getElementById('master-key-container');
+        const keyInput = document.getElementById('master_key');
+        const emailInput = document.getElementById('email-input');
+        const titulo = document.getElementById('titulo-login');
 
         if (rol === 'admin') {
-            adminKeyContainer.style.display = 'block';
-            adminKeyInput.setAttribute('required', 'true');
+            titulo.textContent = 'Acceso de Administrador';
+            emailInput.placeholder = 'Correo corporativo de Admin...';
+            keyContainer.style.display = 'flex';
+            keyInput.setAttribute('required', 'true');
+        } else if (rol === 'dev') {
+            titulo.textContent = 'Acceso de Desarrollador';
+            emailInput.placeholder = 'Correo corporativo de Dev...';
+            keyContainer.style.display = 'none';
+            keyInput.removeAttribute('required');
+            keyInput.value = '';
+        } else if (rol === 'cliente') {
+            titulo.textContent = 'Acceso de Cliente';
+            emailInput.placeholder = 'Tu correo (Gmail)...';
+            keyContainer.style.display = 'none';
+            keyInput.removeAttribute('required');
+            keyInput.value = '';
+        }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = 'OCULTAR';
         } else {
-            adminKeyContainer.style.display = 'none';
-            adminKeyInput.removeAttribute('required');
-            adminKeyInput.value = '';
+            input.type = 'password';
+            btn.textContent = 'VER';
         }
     }
 </script>

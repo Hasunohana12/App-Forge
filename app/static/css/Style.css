@@ -1,10 +1,11 @@
 :root {
-    --bg-main: #ffffff;
-    --navy-blue: #2c3267;
-    --purple-border: #d4b1db;
-    --purple-pill: #d2b5d9;
-    --purple-input: #7b698e;
-    --purple-light-accent: #d2b5d9;
+    --bg-main: #f8fafc;
+    --navy-blue: #2b2a63;
+    --navy-dark: #1a1b35;
+    --accent-purple: #6d28d9;
+    --card-border: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-muted: #64748b;
     --text-white: #ffffff;
 }
 
@@ -22,7 +23,7 @@ body {
     flex-direction: column;
     position: relative;
     overflow-x: hidden;
-    color: var(--navy-blue);
+    color: var(--text-primary);
 }
 
 body::before {
@@ -33,7 +34,7 @@ body::before {
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 220px 0 0 220px;
+    border-width: 180px 0 0 180px;
     border-color: transparent transparent transparent var(--navy-blue);
     z-index: 1;
     pointer-events: none;
@@ -47,7 +48,7 @@ body::after {
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 220px 220px 0;
+    border-width: 0 180px 180px 0;
     border-color: transparent var(--navy-blue) transparent transparent;
     z-index: 1;
     pointer-events: none;
@@ -71,7 +72,7 @@ nav {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: var(--navy-blue);
     text-decoration: none;
@@ -79,10 +80,17 @@ nav {
     text-transform: uppercase;
 }
 
+.logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
 nav ul {
     display: flex;
     list-style: none;
-    gap: 20px;
+    gap: 15px;
 }
 
 nav ul li a {
@@ -95,8 +103,75 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    background-color: var(--purple-pill);
+    background-color: var(--navy-blue);
     color: var(--text-white);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: var(--navy-dark);
+    border-bottom: 2px solid var(--navy-blue);
+    position: relative;
+    z-index: 10;
+}
+
+.header-nav-links {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.header-nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.header-nav-links a:hover,
+.header-nav-links a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-white);
+}
+
+.header-right-panel {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.role-pill-badge {
+    background-color: #334155;
+    color: var(--text-white);
+    padding: 8px 22px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-logout-link {
+    color: #f87171 !important;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border: 1px solid #f87171;
+    padding: 6px 14px;
+    border-radius: 18px;
+    transition: background 0.2s;
+}
+
+.btn-logout-link:hover {
+    background: #f87171;
+    color: var(--text-white) !important;
 }
 
 main.container {
@@ -104,19 +179,19 @@ main.container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 30px 20px 80px 20px;
+    padding: 40px 20px;
     position: relative;
     z-index: 10;
 }
 
 .app-card {
     background: #ffffff;
-    border: 7px solid var(--purple-border);
-    border-radius: 35px;
+    border: 2px solid var(--card-border);
+    border-radius: 24px;
     padding: 35px;
     width: 100%;
     max-width: 520px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -124,26 +199,27 @@ main.container {
 }
 
 .app-card-wide {
-    max-width: 850px;
+    max-width: 900px;
 }
 
 .pill-title {
-    background-color: var(--purple-pill);
+    background-color: var(--navy-blue);
     color: var(--text-white);
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: bold;
     padding: 10px 30px;
     border-radius: 50px;
     text-align: center;
     width: 100%;
+    letter-spacing: 0.5px;
 }
 
 .pill-subhead {
-    background-color: var(--purple-pill);
+    background-color: var(--navy-blue);
     color: var(--text-white);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: bold;
-    padding: 10px 25px;
+    padding: 8px 24px;
     border-radius: 50px;
     text-align: center;
     display: inline-block;
@@ -153,107 +229,90 @@ main.container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .input-capsule {
-    background-color: var(--purple-input);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 24px;
-    color: var(--text-white);
-    font-size: 1rem;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 25px;
+    padding: 12px 20px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
     outline: none;
     width: 100%;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.input-capsule:focus {
+    border-color: var(--navy-blue);
+    background-color: #ffffff;
 }
 
 .input-capsule::placeholder {
-    color: #e2d7ec;
+    color: #94a3b8;
 }
 
 textarea.input-capsule {
-    border-radius: 25px;
+    border-radius: 16px;
     resize: vertical;
+}
+
+.password-field-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.password-field-container input {
+    padding-right: 85px !important;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    background-color: var(--navy-blue);
+    color: var(--text-white);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-size: 0.72rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    background-color: var(--navy-dark);
 }
 
 .btn-arrow {
     background-color: var(--navy-blue);
     color: var(--text-white);
     border: none;
-    padding: 10px 35px;
+    padding: 12px 35px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+    border-radius: 25px;
     transition: transform 0.2s ease, background-color 0.2s ease;
-    margin-top: 10px;
 }
 
 .btn-arrow:hover {
-    background-color: #1e2348;
-    transform: scale(1.05);
+    background-color: var(--navy-dark);
+    transform: translateY(-2px);
 }
 
-.triangles-decoration {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 5px;
+.btn-secondary {
+    background-color: #64748b !important;
 }
 
-.triangle-up {
-    width: 0;
-    height: 0;
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-bottom: 24px solid var(--navy-blue);
-}
-
-.triangle-down {
-    width: 0;
-    height: 0;
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 24px solid var(--purple-pill);
-    margin-top: -8px;
-    margin-left: 15px;
-}
-
-.text-box-purple {
-    background-color: var(--purple-input);
-    color: var(--text-white);
-    padding: 15px 25px;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    text-align: center;
-    width: 100%;
-}
-
-.grid-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    width: 100%;
-}
-
-.card-item {
-    background-color: var(--purple-input);
-    color: var(--text-white);
-    padding: 20px;
-    border-radius: 25px;
-    text-align: center;
-}
-
-.card-item h3 {
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-}
-
-.card-item p {
-    font-size: 0.9rem;
-    opacity: 0.9;
+.btn-secondary:hover {
+    background-color: #475569 !important;
 }
 
 .team-list {
@@ -265,28 +324,116 @@ textarea.input-capsule {
 }
 
 .team-list li {
-    background-color: var(--purple-input);
-    color: var(--text-white);
-    padding: 12px 25px;
-    border-radius: 50px;
+    background-color: #f8fafc;
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    padding: 15px 22px;
+    border-radius: 16px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
+.card-item {
+    background-color: #ffffff;
+    border: 1px solid var(--card-border);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.text-box-purple {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+    border: 1px dashed #cbd5e1;
+    padding: 20px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    text-align: center;
+    width: 100%;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-free {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badge-sold {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.badge-dev {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.portfolio-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    width: 100%;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+.portfolio-card {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.portfolio-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background-color: #f1f5f9;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.portfolio-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 footer {
     position: relative;
     z-index: 10;
     text-align: center;
-    padding: 20px;
+    padding: 25px;
     font-size: 0.85rem;
     color: var(--navy-blue);
     font-weight: 600;
-}
-.logo-img {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: inline-block;
-    vertical-align: middle;
 }

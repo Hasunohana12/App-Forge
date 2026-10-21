@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Panel - App Forge{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <div class="logo">
+                <a href="{{ url_for('home') }}" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1rem;">
+                    <img src="{{ url_for('static', filename='imagenes/logoApp.jpg') }}" alt="Logo App Forge" class="logo-img" style="height: 38px; border-radius: 6px;">
+                    <span>APP FORGE</span>
+                </a>
+            </div>
+
+            {% if session.get('role') == 'admin' %}
+            <ul class="header-nav-links">
+                <li><a href="{{ url_for('admin_dashboard') }}">Solicitudes</a></li>
+                <li><a href="{{ url_for('admin_projects') }}">Proyectos</a></li>
+                <li><a href="{{ url_for('admin_devs') }}">Programadores</a></li>
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="header-right-panel">
+            <div class="role-pill-badge">
+                {% if session.get('role') == 'admin' %}Administrador
+                {% elif session.get('role') == 'dev' %}Programador
+                {% elif session.get('role') == 'cliente' %}Cliente{% endif %}
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-logout-link">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

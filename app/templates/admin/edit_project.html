@@ -1,0 +1,37 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Editar Proyecto - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Editar Aplicación #{{ proyecto.id_app }}</div>
+
+    <form action="{{ url_for('admin_edit_project', id_app=proyecto.id_app) }}" method="POST" class="form-group-custom">
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Nombre de la Aplicación</label>
+        <input type="text" name="nombre" class="input-capsule" value="{{ proyecto.nombre }}" required>
+
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Descripción Pública</label>
+        <textarea name="descripcion" class="input-capsule" rows="3" required>{{ proyecto.descripcion }}</textarea>
+
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Estado Comercial</label>
+        <select name="estado" class="input-capsule" style="cursor: pointer;">
+            <option value="DISPONIBLE" {% if proyecto.estado == 'DISPONIBLE' %}selected{% endif %}>DISPONIBLE (Lista para comprar)</option>
+            <option value="VENDIDO" {% if proyecto.estado == 'VENDIDO' %}selected{% endif %}>VENDIDO (Propiedad de cliente)</option>
+            <option value="EN_DESARROLLO" {% if proyecto.estado == 'EN_DESARROLLO' %}selected{% endif %}>EN DESARROLLO</option>
+        </select>
+
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">URL de Imagen del Proyecto</label>
+        <input type="url" name="imagen_url" class="input-capsule" value="{{ proyecto.imagen_url|default('') }}" placeholder="https://ejemplo.com/imagen.jpg">
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; margin: 5px 0;">
+            <input type="checkbox" id="es_publico" name="es_publico_portafolio" value="true" {% if proyecto.es_publico_portafolio %}checked{% endif %} style="width: 18px; height: 18px;">
+            <label for="es_publico">Mostrar en Portafolio Público</label>
+        </div>
+
+        <div style="text-align: center; display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+            <button type="submit" class="btn-arrow">Guardar Cambios</button>
+            <a href="{{ url_for('admin_projects') }}" class="btn-arrow btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

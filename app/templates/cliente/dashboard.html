@@ -1,0 +1,24 @@
+{% extends "base_dashboard.html" %}
+
+{% block content %}
+<div class="app-card app-card-wide">
+    <div class="pill-title">Mi Proyecto y Comunicación</div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3>Chat con el Equipo de Desarrollo</h3>
+        </div>
+        <div class="chat-messages" id="chat-box">
+            {% for msg in mensajes %}
+                <div class="message {% if msg.emisor == session.get('user_id') %}msg-own{% else %}msg-other{% endif %}">
+                    <strong>{{ msg.nombre_emisor }}:</strong> {{ msg.contenido }}
+                </div>
+            {% endfor %}
+        </div>
+        <form id="chat-form" action="{{ url_for('enviar_mensaje') }}" method="POST" class="chat-input-area">
+            <input type="text" name="mensaje" placeholder="Escribe tu mensaje al programador..." required class="input-capsule">
+            <button type="submit" class="btn-arrow">Enviar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

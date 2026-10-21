@@ -1,29 +1,34 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Portafolio - App Forge{% endblock %}
 
 {% block content %}
-<div class="app-card app-card-wide">
-    <div class="pill-title">Portafolio de Proyectos</div>
+<div class="portfolio-container">
+    <div class="portfolio-header-title">Portafolio de Proyectos</div>
 
     {% if aplicaciones %}
-        <div class="grid-cards">
+        <div class="portfolio-grid">
             {% for app in aplicaciones %}
-            <div class="card-item">
-                <h3>{{ app.nombre if app.nombre else 'Proyecto #' ~ loop.index }}</h3>
-                <p>{{ app.descripcion if app.descripcion else 'Sin descripción.' }}</p>
-                <br>
-                <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-arrow" style="font-size: 0.8rem; padding: 6px 20px;">Ver Detalle</a>
+            <div class="portfolio-card">
+                {% if app.imagen_url %}
+                    <img src="{{ app.imagen_url }}" alt="{{ app.nombre }}" class="portfolio-card-img">
+                {% else %}
+                    <div class="portfolio-card-img" style="display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.85rem;">
+                        Sin imagen
+                    </div>
+                {% endif %}
+                <div class="portfolio-card-body">
+                    <h3 class="portfolio-card-title">{{ app.nombre if app.nombre else 'Proyecto #' ~ loop.index }}</h3>
+                    <p class="portfolio-card-desc">{{ app.descripcion if app.descripcion else 'Sin descripción disponible.' }}</p>
+                    <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-detail">Ver Detalle</a>
+                </div>
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div class="text-box-purple">No hay proyectos registrados en este momento.</div>
+        <div class="empty-state">
+            No hay proyectos públicos registrados en este momento.
+        </div>
     {% endif %}
-
-    <div class="triangles-decoration">
-        <div class="triangle-up"></div>
-        <div class="triangle-down"></div>
-    </div>
 </div>
 {% endblock %}

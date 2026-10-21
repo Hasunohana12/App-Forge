@@ -1,0 +1,48 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Nuevo Programador - App Forge{% endblock %}
+
+{% block content %}
+<div class="app-card">
+    <div class="pill-title">Registrar Nuevo Programador</div>
+
+    <form action="{{ url_for('admin_new_dev') }}" method="POST" id="dev-form" class="form-group-custom">
+        <input type="text" name="nombre_completo" class="input-capsule" placeholder="Nombre completo..." required>
+        <input type="text" name="especialidad" class="input-capsule" placeholder="Especialidad (ej: Backend, Frontend, Fullstack)..." required>
+        <input type="email" name="email" class="input-capsule" placeholder="Correo corporativo..." required>
+        <input type="password" name="contrasena" class="input-capsule" placeholder="Contraseña de acceso..." required>
+
+        <div style="text-align: center; display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <button type="submit" class="btn-arrow">Registrar Programador</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-arrow btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <div class="triangles-decoration">
+        <div class="triangle-up"></div>
+        <div class="triangle-down"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('dev-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        Swal.fire({
+            title: '¿Registrar Desarrollador?',
+            text: 'Se creará el usuario para que el programador pueda iniciar sesión.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#2b2a63',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+</script>
+{% endblock %}
