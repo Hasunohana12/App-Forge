@@ -4,35 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Panel - App Forge{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/Style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header class="dashboard-header">
         <div style="display: flex; align-items: center; gap: 30px;">
             <div class="logo">
-                <a href="{{ url_for('home') }}" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1rem;">
+                <a href="{{ url_for('home') }}" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1rem; text-decoration: none; color: #ffffff;">
                     <img src="{{ url_for('static', filename='imagenes/logoApp.jpg') }}" alt="Logo App Forge" class="logo-img" style="height: 38px; border-radius: 6px;">
                     <span>APP FORGE</span>
                 </a>
             </div>
 
             {% if session.get('role') == 'admin' %}
-            <ul class="header-nav-links">
-                <li><a href="{{ url_for('admin_dashboard') }}">Solicitudes</a></li>
-                <li><a href="{{ url_for('admin_projects') }}">Proyectos</a></li>
-                <li><a href="{{ url_for('admin_devs') }}">Programadores</a></li>
+            <ul class="header-nav-links" style="display: flex; gap: 20px; list-style: none; margin: 0; padding: 0;">
+                <li><a href="{{ url_for('admin_dashboard') }}" style="color: #ffffff; text-decoration: none; font-weight: 600;">Solicitudes</a></li>
+                <li><a href="{{ url_for('admin_projects') }}" style="color: #ffffff; text-decoration: none; font-weight: 600;">Proyectos</a></li>
+                <li><a href="{{ url_for('admin_devs') }}" style="color: #ffffff; text-decoration: none; font-weight: 600;">Programadores</a></li>
+            </ul>
+            {% endif %}
+
+            {% if session.get('role') == 'dev' %}
+            <ul class="header-nav-links" style="display: flex; align-items: center; gap: 20px; list-style: none; margin: 0; padding: 0;">
+                <li>
+                    <a href="{{ url_for('dev_dashboard') }}" style="color: #ffffff; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+                        Proyectos
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('cliente_dashboard') }}" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+                        Chat
+                    </a>
+                </li>
+                <li>
+                    <select name="estado_disponibilidad" id="dev-status-select" 
+                            style="background-color: #5b21b6; color: #ffffff; border: 1px solid #7c3aed; border-radius: 20px; padding: 5px 12px; font-weight: 700; font-size: 0.82rem; cursor: pointer; outline: none;">
+                        <option value="disponible" selected> Disponible</option>
+                        <option value="ocupado"> Ocupado</option>
+                    </select>
+                </li>
             </ul>
             {% endif %}
         </div>
 
-        <div class="header-right-panel">
-            <div class="role-pill-badge">
+        <div class="header-right-panel" style="display: flex; align-items: center; gap: 15px;">
+            <div class="role-pill-badge" style="background-color: #3b82f6; color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">
                 {% if session.get('role') == 'admin' %}Administrador
                 {% elif session.get('role') == 'dev' %}Programador
                 {% elif session.get('role') == 'cliente' %}Cliente{% endif %}
             </div>
-            <a href="{{ url_for('logout') }}" class="btn-logout-link">Cerrar Sesión</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout-link" style="color: #f87171; border: 1px solid #f87171; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 700;">
+                Cerrar Sesión
+            </a>
         </div>
     </header>
 

@@ -6,14 +6,14 @@
 <div class="app-card">
     <div class="pill-title">Solicita tu Proyecto</div>
 
-    <form id="contact-form" action="{{ url_for('contact') }}" method="POST" class="form-group-custom">
-        <input type="text" name="nombre" class="input-capsule" placeholder="Tu nombre..." required>
-        <input type="email" name="email" class="input-capsule" placeholder="Tu correo (Gmail)..." required>
-        <input type="tel" name="telefono" class="input-capsule" placeholder="Teléfono de contacto...">
-        <textarea name="detalles" class="input-capsule" rows="3" placeholder="Detalles de la app que necesitas..." required></textarea>
+    <form id="contact-form" class="form-group-custom">
+        <input type="text" id="nombre" name="nombre" class="input-capsule" placeholder="Tu nombre..." required>
+        <input type="email" id="email" name="email" class="input-capsule" placeholder="Tu correo (Gmail)..." required>
+        <input type="tel" id="telefono" name="telefono" class="input-capsule" placeholder="Teléfono de contacto...">
+        <textarea id="detalles" name="detalles" class="input-capsule" rows="3" placeholder="Detalles de la app que necesitas..." required></textarea>
 
         <div style="text-align: center;">
-            <button type="submit" class="btn-arrow">Enviar Solicitud</button>
+            <button type="submit" id="btn-submit" class="btn-arrow">Enviar Solicitud</button>
         </div>
     </form>
 
@@ -32,36 +32,65 @@
         emailjs.init("wl_QtPBH3gf582cBc");
     })();
 
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault(); 
-        const form = this;
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-        emailjs.sendForm('service_ykin98m', 'template_kxvqzi9', form)
-            .then(function() {
+        const btn = document.getElementById('btn-submit');
+        btn.disabled = true;
+        btn.innerText = 'Procesando...';
+
+        const formData = new FormData(this);
+
+        try {
+            // 1. Guardar cliente y generar password en Supabase vía Flask
+            const response = await fetch("{{ url_for('contact') }}", {
+                method: 'POST',
+                body: formData
+            });
+
+            const resData = await response.json();
+
+            if (resData.exito) {
+                // 2. Enviar Correo con EmailJS incluyendo la contraseña devuelta
+                const templateParams = {
+                    nombre: resData.datos.nombre,
+                    email: resData.datos.email,
+                    telefono: resData.datos.telefono,
+                    detalles: resData.datos.detalles,
+                    password_temporal: resData.password_temporal
+                };
+
+                await emailjs.send('service_ykin98m', 'template_kxvqzi9', templateParams);
+
+                // 3. Mostrar Alerta de Éxito al usuario
                 Swal.fire({
-                    title: '¡Solicitud Enviada!',
-                    text: 'Revisa tu casilla de correo para ver la confirmación.',
+                    title: '¡Solicitud Registrada!',
+                    text: 'Te hemos enviado un correo con tus credenciales de acceso a tu panel.',
                     icon: 'success',
                     confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#6B46C1',
-                    background: '#1A1F2C',
-                    color: '#FFFFFF'
-                }).then((result) => {
-                    HTMLFormElement.prototype.submit.call(form);
+                    confirmButtonColor: '#5b21b6',
+                    background: '#1e293b',
+                    color: '#ffffff'
                 });
-            }, function(error) {
-                Swal.fire({
-                    title: 'Aviso de Notificación',
-                    text: 'Procesando la solicitud en el sistema...',
-                    icon: 'warning',
-                    confirmButtonText: 'Continuar',
-                    confirmButtonColor: '#6B46C1',
-                    background: '#1A1F2C',
-                    color: '#FFFFFF'
-                }).then((result) => {
-                    HTMLFormElement.prototype.submit.call(form);
-                });
+
+                this.reset();
+            } else {
+                throw new Error("No se pudo registrar la solicitud.");
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un inconveniente al procesar tu solicitud. Intenta nuevamente.',
+                icon: 'error',
+                confirmButtonColor: '#5b21b6',
+                background: '#1e293b',
+                color: '#ffffff'
             });
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Enviar Solicitud';
+        }
     });
 </script>
 {% endblock %}

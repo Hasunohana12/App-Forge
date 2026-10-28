@@ -1,5 +1,7 @@
 import os
 import requests
+import secrets
+import string
 
 PROJECT_REF = os.getenv('SUPABASE_URL', 'https://flyznurbkihesnylrwov.supabase.co').replace('https://', '').replace('.supabase.co', '')
 API_KEY = os.getenv('SUPABASE_KEY', 'sb_publishable_E7bpFRnkfmdcV8ouIUEJrQ_tDUxF2sF')
@@ -55,15 +57,21 @@ def obtener_aplicaciones():
         print(f"Excepción en obtener_aplicaciones: {e}")
         return []
 
+def generar_password_random(longitud=8):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(caracteres) for _ in range(longitud))
+
 def crear_solicitud_cliente(nombre, telefono, email, detalles_app):
     try:
+        password_temp = generar_password_random()
+
         body_cliente = {
             "nombre": nombre,
-            "email": email
+            "email": email,
+            "password": password_temp,
+            "contacto": telefono or "-",
+            "telefono": telefono or "-"
         }
-        if telefono:
-            body_cliente["telefono"] = telefono
-            body_cliente["contacto"] = telefono
 
         res_cliente = requests.post(f"{BASE_URL}/cliente", json=body_cliente, headers=HEADERS)
         
@@ -74,8 +82,6 @@ def crear_solicitud_cliente(nombre, telefono, email, detalles_app):
                 id_cliente = data_cli[0].get("id_cliente")
             elif isinstance(data_cli, dict):
                 id_cliente = data_cli.get("id_cliente")
-        else:
-            print(f"Error al crear cliente en Supabase ({res_cliente.status_code}): {res_cliente.text}")
 
         body_app = {
             "nombre": f"Solicitud: {nombre}",
@@ -88,11 +94,10 @@ def crear_solicitud_cliente(nombre, telefono, email, detalles_app):
 
         res_app = requests.post(f"{BASE_URL}/aplicacion", json=body_app, headers=HEADERS)
         
-        if res_app.status_code not in (200, 201):
-            print(f"Error al crear solicitud/aplicacion en Supabase ({res_app.status_code}): {res_app.text}")
-            return None
+        if res_app.status_code in (200, 201):
+            return {"exito": True, "password_temporal": password_temp}
             
-        return res_app.json()
+        return {"exito": False, "password_temporal": None}
     except Exception as e:
         print(f"Excepción en crear_solicitud_cliente: {e}")
-        return None
+        return {"exito": False, "password_temporal": None}

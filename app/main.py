@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 
 from app.utils.decorators import role_required
 
@@ -54,8 +54,18 @@ def contact():
         telefono = request.form.get('telefono')
         detalles = request.form.get('detalles')
 
-        crear_solicitud_cliente(nombre, telefono, email, detalles)
-        return redirect(url_for('contact'))
+        resultado = crear_solicitud_cliente(nombre, telefono, email, detalles)
+        
+        return jsonify({
+            'exito': resultado.get("exito", False),
+            'password_temporal': resultado.get("password_temporal"),
+            'datos': {
+                'nombre': nombre,
+                'email': email,
+                'telefono': telefono,
+                'detalles': detalles
+            }
+        })
 
     return render_template('contact.html')
 
