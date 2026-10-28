@@ -1,37 +1,80 @@
 {% extends "base_dashboard.html" %}
 
-{% block title %}Editar Proyecto - App Forge{% endblock %}
-
 {% block content %}
-<div class="app-card">
-    <div class="pill-title">Editar Aplicación #{{ proyecto.id_app }}</div>
+<div style="max-width: 580px; margin: 30px auto; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+    
+    <div style="text-align: center; margin-bottom: 25px;">
+        <span style="background-color: #5b21b6; color: #ffffff; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 0.95rem; display: inline-block;">
+            Editar Aplicación #{{ proyecto.id_app }}
+        </span>
+    </div>
 
-    <form action="{{ url_for('admin_edit_project', id_app=proyecto.id_app) }}" method="POST" class="form-group-custom">
-        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Nombre de la Aplicación</label>
-        <input type="text" name="nombre" class="input-capsule" value="{{ proyecto.nombre }}" required>
-
-        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Descripción Pública</label>
-        <textarea name="descripcion" class="input-capsule" rows="3" required>{{ proyecto.descripcion }}</textarea>
-
-        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">Estado Comercial</label>
-        <select name="estado" class="input-capsule" style="cursor: pointer;">
-            <option value="DISPONIBLE" {% if proyecto.estado == 'DISPONIBLE' %}selected{% endif %}>DISPONIBLE (Lista para comprar)</option>
-            <option value="VENDIDO" {% if proyecto.estado == 'VENDIDO' %}selected{% endif %}>VENDIDO (Propiedad de cliente)</option>
-            <option value="EN_DESARROLLO" {% if proyecto.estado == 'EN_DESARROLLO' %}selected{% endif %}>EN DESARROLLO</option>
-        </select>
-
-        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-primary); margin-bottom: -6px;">URL de Imagen del Proyecto</label>
-        <input type="url" name="imagen_url" class="input-capsule" value="{{ proyecto.imagen_url|default('') }}" placeholder="https://ejemplo.com/imagen.jpg">
-
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; margin: 5px 0;">
-            <input type="checkbox" id="es_publico" name="es_publico_portafolio" value="true" {% if proyecto.es_publico_portafolio %}checked{% endif %} style="width: 18px; height: 18px;">
-            <label for="es_publico">Mostrar en Portafolio Público</label>
+    <form action="{{ url_for('admin_edit_project', id_app=proyecto.id_app) }}" method="POST" enctype="multipart/form-data">
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Nombre de la Aplicación</label>
+            <input type="text" name="nombre" value="{{ proyecto.nombre }}" required 
+                   style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
         </div>
 
-        <div style="text-align: center; display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-            <button type="submit" class="btn-arrow">Guardar Cambios</button>
-            <a href="{{ url_for('admin_projects') }}" class="btn-arrow btn-secondary">Cancelar</a>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Descripción Pública</label>
+            <textarea name="descripcion" rows="3" required 
+                      style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b; resize: vertical;">{{ proyecto.descripcion }}</textarea>
         </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Estado Comercial</label>
+                <select name="estado" style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b;">
+                    <option value="EN_DESARROLLO" {% if proyecto.estado == 'EN_DESARROLLO' %}selected{% endif %}>EN DESARROLLO</option>
+                    <option value="COMPLETADO" {% if proyecto.estado == 'COMPLETADO' %}selected{% endif %}>COMPLETADO</option>
+                    <option value="PENDIENTE" {% if proyecto.estado == 'PENDIENTE' %}selected{% endif %}>PENDIENTE</option>
+                </select>
+            </div>
+
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Fecha de Inicio</label>
+                <input type="date" name="fecha_inicio" value="{{ proyecto.fecha_inicio or '' }}" 
+                       style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 25px; background: #f8fafc; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 10px;">Imagen de Portada</label>
+            
+            {% set img = proyecto.imagen_portada or proyecto.imagen_url %}
+            {% if img %}
+                <div style="margin-bottom: 12px;">
+                    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 6px 0;">Imagen asignada ({{ img }}):</p>
+                    <img src="{{ url_for('static', filename='imagenes/' + img) }}" alt="Portada Actual" 
+                         style="max-height: 120px; border-radius: 8px; border: 1px solid #cbd5e1; display: block; object-fit: cover;">
+                </div>
+            {% else %}
+                <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 10px 0;">No hay imagen asignada a este proyecto.</p>
+            {% endif %}
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #5b21b6; margin-bottom: 6px;">Cambiar / Seleccionar Nueva Imagen:</label>
+            <input type="file" name="nueva_imagen" accept="image/*" style="width: 100%; font-size: 0.85rem; color: #475569;">
+        </div>
+
+        <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="es_publico" name="es_publico_portafolio" {% if proyecto.es_publico_portafolio %}checked{% endif %} 
+                   style="width: 18px; height: 18px; accent-color: #5b21b6; cursor: pointer;">
+            <label for="es_publico" style="font-weight: 600; color: #475569; font-size: 0.85rem; cursor: pointer;">Mostrar en Portafolio Público</label>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
+            <a href="{{ url_for('admin_projects') }}" 
+               style="padding: 12px 20px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-radius: 10px; background-color: #f1f5f9;">
+                Cancelar
+            </a>
+            <button type="submit" 
+                    style="padding: 12px 24px; background-color: #5b21b6; color: #ffffff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">
+                Guardar Cambios
+            </button>
+        </div>
+
     </form>
 </div>
 {% endblock %}

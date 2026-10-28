@@ -1,30 +1,55 @@
 ﻿{% extends "base_dashboard.html" %}
 
-{% block title %}Asignar Equipo - App Forge{% endblock %}
-
 {% block content %}
-<div class="app-card">
-    <div class="pill-title">Asignar Desarrollador a Solicitud</div>
+<div style="max-width: 500px; margin: 30px auto; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+    
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="background-color: #5b21b6; color: #ffffff; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 0.95rem; display: inline-block;">
+            Asignar Desarrollador a Solicitud #{{ id_app }}
+        </span>
+    </div>
 
-    <form action="{{ url_for('admin_assign', id_app=id_app) }}" method="POST" class="form-group-custom">
-        <select name="id_desarrollador" class="input-capsule" required>
-            <option value="" disabled selected>Selecciona un Programador disponible...</option>
-            {% for dev in desarrolladores %}
-                {% if dev.disponible %}
-                    <option value="{{ dev.id_desarrollador }}">
-                        {{ dev.nombre_completo }} — {{ dev.especialidad }} (Activos: {{ dev.proyectos_activos|default(0) }})
-                    </option>
-                {% endif %}
-            {% endfor %}
-        </select>
+    {% if proyecto %}
+    <div style="background: #f8fafc; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #cbd5e1; text-align: center;">
+        <strong style="color: #1e293b; font-size: 1rem;">{{ proyecto.nombre }}</strong>
+    </div>
+    {% endif %}
 
-        <input type="text" name="rol" class="input-capsule" placeholder="Rol (ej: Lider Fullstack, Backend)..." required>
-        <input type="number" name="horas_dedicadas" class="input-capsule" placeholder="Horas estimadas..." min="1" required>
-
-        <div style="text-align: center; display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-            <button type="submit" class="btn-arrow">Conectar y Abrir Chat</button>
-            <a href="{{ url_for('admin_dashboard') }}" class="btn-arrow" style="background-color: #3f3d56;">Cancelar</a>
+    <form action="{{ url_for('admin_assign', id_app=id_app) }}" method="POST">
+        
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 6px;">Programador</label>
+            <select name="id_desarrollador" required style="width: 100%; padding: 12px 15px; font-size: 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; color: #1e293b;">
+                <option value="" disabled selected>Selecciona un Programador disponible...</option>
+                {% for dev in desarrolladores %}
+                    <option value="{{ dev.id_desarrollador }}">{{ dev.nombre_completo }} ({{ dev.especialidad }})</option>
+                {% endfor %}
+            </select>
         </div>
+
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 6px;">Rol en el Proyecto</label>
+            <input type="text" name="rol" placeholder="Ej: Lider Fullstack, Backend..." required
+                   style="width: 100%; padding: 12px 15px; font-size: 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b;">
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 6px;">Horas Estimadas</label>
+            <input type="number" name="horas_dedicadas" placeholder="Horas estimadas..." min="1" required
+                   style="width: 100%; padding: 12px 15px; font-size: 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b;">
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <a href="{{ url_for('admin_dashboard') }}" 
+               style="padding: 12px 20px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-radius: 10px; background-color: #f1f5f9;">
+                Cancelar
+            </a>
+            <button type="submit" 
+                    style="padding: 12px 24px; background-color: #5b21b6; color: #ffffff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">
+                Confirmar Asignación
+            </button>
+        </div>
+
     </form>
 </div>
 {% endblock %}

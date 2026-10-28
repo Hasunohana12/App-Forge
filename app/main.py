@@ -1,4 +1,8 @@
-import os
+﻿import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from app.utils.decorators import role_required
@@ -14,12 +18,17 @@ from app.services.dev_service import (
     obtener_proyectos_por_dev,
     asignar_dev_a_proyecto,
     crear_nuevo_desarrollador,
-    obtener_desarrollador_por_credenciales
+    obtener_desarrollador_por_credenciales,
+    obtener_desarrollador_por_id,
+    actualizar_desarrollador,
+    eliminar_desarrollador
 )
 from app.services.projects_service import (
     obtener_portafolio_publico,
     obtener_proyecto_por_id,
-    crear_nuevo_proyecto
+    crear_nuevo_proyecto,
+    actualizar_proyecto,
+    eliminar_proyecto
 )
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -27,7 +36,7 @@ template_dir = os.path.join(base_dir, 'templates')
 static_dir = os.path.join(base_dir, 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
-app.secret_key = 'super-secret-key-appforge'
+app.secret_key = os.getenv('SECRET_KEY', 'super-secret-key-appforge')
 
 @app.route('/')
 def home():
@@ -46,7 +55,7 @@ def contact():
         detalles = request.form.get('detalles')
 
         crear_solicitud_cliente(nombre, telefono, email, detalles)
-        return render_template('contact.html', mensaje="¡Solicitud enviada exitosamente!")
+        return redirect(url_for('contact'))
 
     return render_template('contact.html')
 
@@ -88,9 +97,9 @@ def login():
         elif rol == 'dev':
             dev = obtener_desarrollador_por_credenciales(email, password)
             if dev:
-                session['user'] = dev['email']
+                session['user'] = dev.get('email')
                 session['role'] = 'dev'
-                session['dev_id'] = dev['id_desarrollador']
+                session['dev_id'] = dev.get('id_desarrollador')
                 return redirect(url_for('dev_dashboard'))
             else:
                 return render_template('admin/login.html', error="Correo o contraseña de desarrollador incorrectos.")
@@ -124,6 +133,10 @@ def admin_assign(id_app):
         return redirect(url_for('admin_dashboard'))
 
     desarrolladores = obtener_desarrolladores()
+    proyecto = obtener_proyecto_por_id(id_app)  
+    return render_template('admin/assign_dev.html', id_app=id_app, proyecto=proyecto, desarrolladores=desarrolladores)
+
+    desarrolladores = obtener_desarrolladores()
     return render_template('admin/assign_dev.html', id_app=id_app, desarrolladores=desarrolladores)
 
 @app.route('/admin/projects')
@@ -153,19 +166,69 @@ def admin_new_project():
     desarrolladores = obtener_desarrolladores()
     return render_template('admin/new_project.html', desarrolladores=desarrolladores)
 
+@app.route('/admin/projects/edit/<int:id_app>', methods=['GET', 'POST'])
+@role_required('admin')
+def admin_edit_project(id_app):
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        descripcion = request.form.get('descripcion')
+        estado = request.form.get('estado')
+        fecha_inicio = request.form.get('fecha_inicio')
+        es_publico = True if request.form.get('es_publico_portafolio') else False
+
+        nueva_imagen = request.files.get('nueva_imagen')
+        imagen_url = None
+        if nueva_imagen and nueva_imagen.filename != '':
+            filename = nueva_imagen.filename
+            filepath = os.path.join(static_dir, 'imagenes', filename)
+            nueva_imagen.save(filepath)
+            imagen_url = filename
+
+        actualizar_proyecto(id_app, nombre, descripcion, estado, fecha_inicio, imagen_url, es_publico)
+        return redirect(url_for('admin_projects'))
+
+    proyecto = obtener_proyecto_por_id(id_app)
+    return render_template('admin/edit_project.html', proyecto=proyecto)
+
+@app.route('/admin/projects/delete/<int:id_app>', methods=['POST'])
+@role_required('admin')
+def admin_delete_project(id_app):
+    eliminar_proyecto(id_app)
+    return redirect(url_for('admin_projects'))
+
 @app.route('/admin/devs')
 @role_required('admin')
 def admin_devs():
     programadores = obtener_desarrolladores()
-    return render_template('admin/devs.html', programadores=programadores)
+    return render_template('admin/devs.html', programadores=programadores, devs=programadores)
+
+@app.route('/admin/devs/edit/<int:id_dev>', methods=['GET', 'POST'])
+@role_required('admin')
+def admin_edit_dev(id_dev):
+    if request.method == 'POST':
+        nombre = request.form.get('nombre_completo')
+        especialidad = request.form.get('especialidad')
+        email = request.form.get('email')
+
+        actualizar_desarrollador(id_dev, nombre, especialidad, email)
+        return redirect(url_for('admin_devs'))
+
+    dev = obtener_desarrollador_por_id(id_dev)
+    return render_template('admin/edit_dev.html', dev=dev)
+
+@app.route('/admin/devs/delete/<int:id_dev>', methods=['POST'])
+@role_required('admin')
+def admin_delete_dev(id_dev):
+    eliminar_desarrollador(id_dev)
+    return redirect(url_for('admin_devs'))
 
 @app.route('/admin/new-dev', methods=['GET', 'POST'])
 @role_required('admin')
 def admin_new_dev():
     if request.method == 'POST':
-        nombre = request.form.get('nombre_completo')
+        nombre = request.form.get('nombre_completo') or request.form.get('nombre')
         especialidad = request.form.get('especialidad')
-        email = request.form.get('email')
+        email = request.form.get('email') or request.form.get('correo')
         contrasena = request.form.get('contrasena')
 
         crear_nuevo_desarrollador(nombre, especialidad, email, contrasena)
@@ -191,21 +254,5 @@ def enviar_mensaje():
     mensaje = request.form.get('mensaje')
     return redirect(url_for('cliente_dashboard'))
 
-@app.route('/admin/projects/edit/<int:id_app>', methods=['GET', 'POST'])
-@role_required('admin')
-def admin_edit_project(id_app):
-    if request.method == 'POST':
-        nombre = request.form.get('nombre')
-        descripcion = request.form.get('descripcion')
-        estado = request.form.get('estado')
-        imagen_url = request.form.get('imagen_url')
-        es_publico = True if request.form.get('es_publico_portafolio') else False
-
-        actualizar_proyecto(id_app, nombre, descripcion, estado, imagen_url, es_publico)
-        return redirect(url_for('admin_projects'))
-
-    proyecto = obtener_proyecto_por_id(id_app)
-    return render_template('admin/edit_project.html', proyecto=proyecto)
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

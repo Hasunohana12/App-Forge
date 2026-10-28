@@ -26,6 +26,7 @@
 
 {% block scripts %}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     (function(){
         emailjs.init("wl_QtPBH3gf582cBc");
@@ -39,30 +40,26 @@
             .then(function() {
                 Swal.fire({
                     title: '¡Solicitud Enviada!',
-                    text: 'Revisa tu casilla de Gmail (o la carpeta Spam) para ver la confirmación.',
+                    text: 'Revisa tu casilla de correo para ver la confirmación.',
                     icon: 'success',
                     confirmButtonText: 'Aceptar',
                     confirmButtonColor: '#6B46C1',
                     background: '#1A1F2C',
                     color: '#FFFFFF'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
+                    HTMLFormElement.prototype.submit.call(form);
                 });
             }, function(error) {
                 Swal.fire({
                     title: 'Aviso de Notificación',
-                    text: 'Hubo un error al enviar la notificación por correo. Procesando solicitud...',
+                    text: 'Procesando la solicitud en el sistema...',
                     icon: 'warning',
                     confirmButtonText: 'Continuar',
                     confirmButtonColor: '#6B46C1',
                     background: '#1A1F2C',
                     color: '#FFFFFF'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
+                    HTMLFormElement.prototype.submit.call(form);
                 });
             });
     });
