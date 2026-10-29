@@ -30,22 +30,22 @@ def obtener_desarrolladores():
         print(f"Error en obtener_desarrolladores: {e}")
         return []
 
-def asignar_dev_a_proyecto(id_app, id_dev, rol="Desarrollador", horas=0):
+def asignar_dev_a_proyecto(id_app, id_dev, rol="DESARROLLADOR", horas_estimadas_dia=None):
     try:
-        body_relacion = {
+        body_rel = {
             "id_app": int(id_app),
             "id_desarrollador": int(id_dev),
-            "rol_desempenado": rol,
-            "horas_dedicadas": int(horas) if horas else 0
+            "rol_desempenado": rol or "DESARROLLADOR"
         }
-        requests.post(f"{BASE_URL}/desarrollador_aplicacion", json=body_relacion, headers=HEADERS)
+        if horas_estimadas_dia:
+            body_rel["horas_estimadas_dia"] = int(horas_estimadas_dia)
 
-        url_app = f"{BASE_URL}/aplicacion?id_app=eq.{id_app}"
-        body_app = {
-            "estado": "ASIGNADO"
-        }
-        res = requests.patch(url_app, json=body_app, headers=HEADERS)
-        return res.status_code in (200, 204)
+        res = requests.post(f"{BASE_URL}/desarrollador_aplicacion", json=body_rel, headers=HEADERS)
+
+        body_app = {"estado_atencion": "ASIGNADO"}
+        requests.patch(f"{BASE_URL}/aplicacion?id_app=eq.{id_app}", json=body_app, headers=HEADERS)
+
+        return res.status_code in (200, 201)
     except Exception as e:
         print(f"Error al asignar dev a proyecto: {e}")
         return False
@@ -94,14 +94,17 @@ def obtener_desarrollador_por_id(id_dev):
         print(f"Error al obtener desarrollador por ID: {e}")
         return None
 
-def actualizar_desarrollador(id_dev, nombre_completo, especialidad, email):
+def actualizar_desarrollador(id_dev, nombre, especialidad, email, contrasena=None):
+    url = f"{BASE_URL}/desarrollador?id_desarrollador=eq.{id_dev}"
     body = {
-        "nombre_completo": nombre_completo,
+        "nombre_completo": nombre,
         "especialidad": especialidad,
         "email": email
     }
+    if contrasena:
+        body["contrasena"] = contrasena
+
     try:
-        url = f"{BASE_URL}/desarrollador?id_desarrollador=eq.{id_dev}"
         res = requests.patch(url, json=body, headers=HEADERS)
         return res.status_code in (200, 204)
     except Exception as e:

@@ -1,69 +1,85 @@
 ﻿{% extends "base_dashboard.html" %}
 
 {% block content %}
-<style>
-    .badge-asignado {
-        background-color: #d1fae5;
-        color: #25065f;
-    }
-    .badge-pendiente {
-        background-color: #fef3c7;
-        color: #9447b8;
-    }
-</style>
-
-<div style="max-width: 900px; margin: 30px auto; background: #ffffff; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+<div style="max-width: 800px; margin: 30px auto;">
     
     <div style="text-align: center; margin-bottom: 25px;">
-        <span style="background-color: #5b21b6; color: #ffffff; padding: 10px 28px; border-radius: 25px; font-weight: 700; font-size: 1.1rem; display: inline-block;">
+        <span style="background-color: #232551; color: #ffffff; padding: 10px 28px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; display: inline-block;">
             Gestión de Solicitudes
         </span>
     </div>
 
     {% if solicitudes %}
-        <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
             {% for sol in solicitudes %}
-            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                        <h3 style="margin: 0; color: #1e293b; font-size: 1.1rem; font-weight: 700;">{{ sol.nombre or 'Solicitud sin Nombre' }}</h3>
+            <div style="background: #ffffff; border: 1.5px solid #232551; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                
+                <div style="flex: 1; min-width: 250px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                        <h3 style="margin: 0; color: #232551; font-size: 1.1rem; font-weight: 800;">{{ sol.nombre }}</h3>
                         
-                        <span class="{% if sol.estado == 'ASIGNADO' %}badge-asignado{% else %}badge-pendiente{% endif %}" style="font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 12px;">
-                            {{ sol.estado or 'PENDIENTE' }}
-                        </span>
+                        {% if sol.estado_atencion == 'ASIGNADO' or sol.tiene_dev %}
+                            <span style="font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; background-color: #5b21b6; color: #ffffff;">
+                                ASIGNADO
+                            </span>
+                        {% else %}
+                            <span style="font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; background-color: #780bf5; color: #ffffff;">
+                                PENDIENTE
+                            </span>
+                        {% endif %}
                     </div>
 
-                    <p style="margin: 0 0 8px 0; color: #64748b; font-size: 0.85rem;">
-                        <strong>Cliente:</strong> {{ sol.cliente.nombre if sol.cliente else 'Contacto Directo' }}
-                        {% if sol.cliente and sol.cliente.email and sol.cliente.email != '-' %}
-                            ({{ sol.cliente.email }})
-                        {% endif %}
+                    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 0.82rem; font-weight: 600;">
+                        Cliente: {{ sol.cliente_nombre or 'Contacto Directo' }}
                     </p>
 
-                    <p style="margin: 0; color: #334155; font-size: 0.9rem; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                        {{ sol.descripcion or 'Sin detalles.' }}
-                    </p>
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; font-size: 0.88rem; color: #334155;">
+                        {{ sol.descripcion or 'Sin detalles proporcionados.' }}
+                    </div>
                 </div>
 
-                <div style="margin-left: 20px;">
-                    {% if sol.estado == 'ASIGNADO' %}
-                        <span style="padding: 10px 18px; background-color: #e2e8f0; color: #475569; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: inline-block;">
-                            Asignado
-                        </span>
+                <div>
+                    {% if sol.estado_atencion == 'ASIGNADO' or sol.tiene_dev %}
+                        <button type="button" onclick="mostrarAlertaAsignado('{{ sol.id_app }}')" 
+                                style="background-color: #e2e8f0; color: #475569; border: 1.5px solid #cbd5e1; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                            Dev Asignado
+                        </button>
                     {% else %}
-                        <a href="{{ url_for('admin_assign', id_app=sol.id_app) }}" style="padding: 10px 18px; background-color: #5b21b6; color: #ffffff; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.85rem; display: inline-block;">
+                        <a href="{{ url_for('admin_assign', id_app=sol.id_app) }}" 
+                           style="background-color: #5b21b6; color: #ffffff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: inline-block;">
                             Asignar Dev
                         </a>
                     {% endif %}
                 </div>
+
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div style="text-align: center; color: #64748b; padding: 40px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; font-size: 0.95rem;">
-            No hay solicitudes registradas en este momento.
+        <div style="text-align: center; color: #64748b; padding: 40px; background: #ffffff; border-radius: 16px; border: 1.5px dashed #cbd5e1; font-weight: 600;">
+            No hay solicitudes pendientes de asignación en este momento.
         </div>
     {% endif %}
 
 </div>
+
+<script>
+function mostrarAlertaAsignado(idApp) {
+    Swal.fire({
+        title: '⚠️ Solicitud ya asignada',
+        text: 'Esta solicitud ya cuenta con un desarrollador asignado. Para agregar más integrantes o editar el equipo, ve a la sección de Proyectos.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#232551',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ir a Editar Proyecto',
+        cancelButtonText: 'Cerrar',
+        borderRadius: '16px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{{ url_for('admin_projects') }}/edit/" + idApp;
+        }
+    });
+}
+</script>
 {% endblock %}

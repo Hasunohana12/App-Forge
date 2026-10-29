@@ -1,48 +1,98 @@
 {% extends "base_dashboard.html" %}
 
-{% block title %}Nuevo Programador - App Forge{% endblock %}
-
 {% block content %}
-<div class="app-card">
-    <div class="pill-title">Registrar Nuevo Programador</div>
-
-    <form action="{{ url_for('admin_new_dev') }}" method="POST" id="dev-form" class="form-group-custom">
-        <input type="text" name="nombre_completo" class="input-capsule" placeholder="Nombre completo..." required>
-        <input type="text" name="especialidad" class="input-capsule" placeholder="Especialidad (ej: Backend, Frontend, Fullstack)..." required>
-        <input type="email" name="email" class="input-capsule" placeholder="Correo corporativo..." required>
-        <input type="password" name="contrasena" class="input-capsule" placeholder="Contraseña de acceso..." required>
-
-        <div style="text-align: center; display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-            <button type="submit" class="btn-arrow">Registrar Programador</button>
-            <a href="{{ url_for('admin_dashboard') }}" class="btn-arrow btn-secondary">Cancelar</a>
-        </div>
-    </form>
-
-    <div class="triangles-decoration">
-        <div class="triangle-up"></div>
-        <div class="triangle-down"></div>
+<div style="max-width: 650px; margin: 30px auto; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 2px solid #232551;">
+    
+    <div style="text-align: center; margin-bottom: 25px;">
+        <span style="background-color: #232551; color: #ffffff; padding: 8px 24px; border-radius: 20px; font-weight: 800; font-size: 1rem; display: inline-block;">
+            Editar Aplicación #{{ proyecto.id_app }}
+        </span>
     </div>
-</div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    document.getElementById('dev-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        Swal.fire({
-            title: '¿Registrar Desarrollador?',
-            text: 'Se creará el usuario para que el programador pueda iniciar sesión.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#2b2a63',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, registrar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-    });
-</script>
+    <form action="{{ url_for('admin_edit_project', id_app=proyecto.id_app) }}" method="POST" enctype="multipart/form-data">
+        
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Nombre de la Aplicación</label>
+            <input type="text" name="nombre" value="{{ proyecto.nombre }}" required 
+                   style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
+        </div>
+
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Descripción Pública</label>
+            <textarea name="descripcion" rows="3" required 
+                      style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b; resize: vertical;">{{ proyecto.descripcion }}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 18px;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Estado Comercial</label>
+                <select name="estado" style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b; background: #f8fafc;">
+                    <option value="DISPONIBLE" {% if proyecto.estado == 'DISPONIBLE' %}selected{% endif %}>DISPONIBLE</option>
+                    <option value="EN_DESARROLLO" {% if proyecto.estado == 'EN_DESARROLLO' %}selected{% endif %}>EN DESARROLLO</option>
+                    <option value="VENDIDO" {% if proyecto.estado == 'VENDIDO' %}selected{% endif %}>VENDIDO</option>
+                </select>
+            </div>
+
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Fecha de Inicio</label>
+                <input type="date" name="fecha_inicio" value="{{ proyecto.fecha_inicio or '' }}" 
+                       style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; color: #1e293b;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Equipo de Programadores Asignado</label>
+            <div style="background-color: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px; max-height: 120px; overflow-y: auto;">
+                {% if desarrolladores %}
+                    {% for dev in desarrolladores %}
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                        <input type="checkbox" id="dev_{{ dev.id_desarrollador }}" name="desarrolladores" value="{{ dev.id_desarrollador }}" style="width: 16px; height: 16px; cursor: pointer;">
+                        <label for="dev_{{ dev.id_desarrollador }}" style="font-size: 0.88rem; color: #1e293b; cursor: pointer;">
+                            <strong>{{ dev.nombre_completo }}</strong> ({{ dev.especialidad }})
+                        </label>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <span style="font-size: 0.85rem; color: #64748b;">No hay programadores registrados en la base de datos.</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 8px;">Imagen de Portada</label>
+            
+            {% set img = proyecto.imagen_url or proyecto.imagen_portada %}
+            {% if img %}
+                <div style="margin-bottom: 10px;">
+                    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 6px 0;">Imagen actual ({{ img }}):</p>
+                    <img src="{{ url_for('static', filename='imagenes/' + img) }}" alt="Portada Actual" 
+                         style="max-height: 110px; border-radius: 8px; border: 1px solid #cbd5e1; display: block; object-fit: cover;">
+                </div>
+            {% else %}
+                <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 8px 0;">No hay imagen asignada a este proyecto.</p>
+            {% endif %}
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Cambiar Imagen de Portada:</label>
+            <input type="file" name="nueva_imagen" accept="image/*" style="width: 100%; font-size: 0.85rem; color: #475569;">
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="es_publico" name="es_publico_portafolio" {% if proyecto.es_publico_portafolio %}checked{% endif %} 
+                   style="width: 18px; height: 18px; accent-color: #232551; cursor: pointer;">
+            <label for="es_publico" style="font-weight: 700; color: #232551; font-size: 0.85rem; cursor: pointer;">Mostrar en Portafolio Público</label>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
+            <a href="{{ url_for('admin_projects') }}" 
+               style="padding: 11px 18px; color: #64748b; text-decoration: none; font-size: 0.88rem; font-weight: 700; border-radius: 10px; background-color: #f1f5f9;">
+                Cancelar
+            </a>
+            <button type="submit" 
+                    style="padding: 11px 22px; background-color: #232551; color: #ffffff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer;">
+                Guardar Cambios
+            </button>
+        </div>
+
+    </form>
+</div>
 {% endblock %}

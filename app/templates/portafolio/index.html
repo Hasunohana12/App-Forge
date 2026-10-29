@@ -3,32 +3,95 @@
 {% block title %}Portafolio - App Forge{% endblock %}
 
 {% block content %}
-<div class="portfolio-container">
-    <div class="portfolio-header-title">Portafolio de Proyectos</div>
+<div style="width: 100%; max-width: 1200px; margin: 30px auto; padding: 0 20px; box-sizing: border-box;">
+    
+    <div style="background: #ffffff; border-radius: 20px; padding: 30px; border: 2px solid #232551; box-shadow: 0 10px 25px rgba(35, 37, 81, 0.08); width: 100%; box-sizing: border-box;">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <span style="background-color: #232551; color: #ffffff; padding: 10px 32px; border-radius: 25px; font-weight: 800; font-size: 1.2rem; display: inline-block;">
+                Portafolio de Proyectos
+            </span>
+        </div>
 
-    {% if aplicaciones %}
-        <div class="portfolio-grid">
-            {% for app in aplicaciones %}
-            <div class="portfolio-card">
-                {% if app.imagen_url %}
-                    <img src="{{ app.imagen_url }}" alt="{{ app.nombre }}" class="portfolio-card-img">
-                {% else %}
-                    <div class="portfolio-card-img" style="display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.85rem;">
-                        Sin imagen
+        {% set proyectos_lista = aplicaciones if aplicaciones else proyectos %}
+
+        {% if proyectos_lista %}
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px; width: 100%;">
+                
+                <button onclick="scrollPortfolio(-1)" style="background: #232551; color: #ffffff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center;">
+                    &#10094;
+                </button>
+
+                <div id="portfolio-track" style="display: flex; flex-direction: row; gap: 20px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0; width: 100%; scrollbar-width: none;">
+                    {% for proj in proyectos_lista %}
+                    <div style="min-width: 260px; width: 260px; max-width: 260px; background: #ffffff; border: 1.5px solid #232551; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; box-sizing: border-box;">
+                        
+                        <div style="position: relative; height: 160px; background-color: #232551; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            {% set img_url = proj.imagen_url or proj.imagen_portada %}
+                            {% if img_url %}
+                                <img src="{{ url_for('static', filename='imagenes/' + img_url) }}" alt="{{ proj.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <span style="color: #cbd5e1; font-weight: 600; font-size: 0.85rem;">Sin Imagen Previa</span>
+                            {% endif %}
+
+                            {% set est = proj.estado or 'DISPONIBLE' %}
+                            <div style="position: absolute; top: 10px; right: 10px;">
+                                {% if est == 'DISPONIBLE' %}
+                                    <span style="font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 10px; background-color: #5b21b6; color: #ffffff;">
+                                        DISPONIBLE
+                                    </span>
+                                {% elif est == 'VENDIDO' %}
+                                    <span style="font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 10px; background-color: #1e1b4b; color: #ffffff;">
+                                        VENDIDO
+                                    </span>
+                                {% else %}
+                                    <span style="font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 10px; background-color: #232551; color: #ffffff;">
+                                        EN DESARROLLO
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div style="padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left;">
+                            <div>
+                                <h4 style="margin: 0 0 6px 0; color: #232551; font-size: 1.1rem; font-weight: 800;">
+                                    {{ proj.nombre or 'Proyecto' }}
+                                </h4>
+                                <p style="margin: 0 0 14px 0; color: #475569; font-size: 0.82rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ proj.descripcion or 'Sin descripción.' }}
+                                </p>
+                            </div>
+
+                            <a href="{{ url_for('portafolio_detalle', id_app=proj.id_app) }}" 
+                               style="display: block; text-align: center; background-color: #232551; color: #ffffff; padding: 9px 12px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.82rem;">
+                                Ver Detalle Completo
+                            </a>
+                        </div>
+
                     </div>
-                {% endif %}
-                <div class="portfolio-card-body">
-                    <h3 class="portfolio-card-title">{{ app.nombre if app.nombre else 'Proyecto #' ~ loop.index }}</h3>
-                    <p class="portfolio-card-desc">{{ app.descripcion if app.descripcion else 'Sin descripción disponible.' }}</p>
-                    <a href="{{ url_for('portafolio_detalle', id_app=app.id_app) }}" class="btn-detail">Ver Detalle</a>
+                    {% endfor %}
                 </div>
+
+                <button onclick="scrollPortfolio(1)" style="background: #232551; color: #ffffff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center;">
+                    &#10095;
+                </button>
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state">
-            No hay proyectos públicos registrados en este momento.
-        </div>
-    {% endif %}
+
+        {% else %}
+            <div style="text-align: center; color: #475569; padding: 40px; background: #f8fafc; border-radius: 12px; border: 1.5px dashed #232551; font-weight: 600;">
+                No hay proyectos cargados en el portafolio actualmente.
+            </div>
+        {% endif %}
+
+    </div>
 </div>
+
+<script>
+function scrollPortfolio(direction) {
+    const track = document.getElementById('portfolio-track');
+    if (track) {
+        track.scrollBy({ left: direction * 280, behavior: 'smooth' });
+    }
+}
+</script>
 {% endblock %}

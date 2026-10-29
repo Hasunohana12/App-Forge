@@ -1,31 +1,124 @@
 {% extends "base.html" %}
 
-{% block title %}Detalle Proyecto - App Forge{% endblock %}
+{% block title %}Detalle - {{ proyecto.nombre or 'Proyecto' }}{% endblock %}
 
 {% block content %}
-<div class="app-card">
-    <div class="pill-title">Detalle del Proyecto #{{ id_app }}</div>
+<style>
+    .dev-avatar-lider {
+        background-color: #5b21b6 !important;
+    }
+    .dev-avatar-dev {
+        background-color: #232551 !important;
+    }
+</style>
 
-    <div class="pill-subhead">Equipo Asignado</div>
+<div style="max-width: 1000px; margin: 30px auto; background: #ffffff; border-radius: 20px; padding: 35px; border: 2px solid #232551; box-shadow: 0 10px 25px rgba(35, 37, 81, 0.08); text-align: left;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <h1 style="margin: 0 0 10px 0; color: #232551; font-size: 1.8rem; font-weight: 800;">
+                {{ proyecto.nombre or 'Detalle del Proyecto' }}
+            </h1>
+            
+            {% set est = proyecto.estado or 'DISPONIBLE' %}
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                {% if est == 'DISPONIBLE' %}
+                    <span style="font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 15px; background-color: #5b21b6; color: #ffffff;">
+                        DISPONIBLE PARA COMPRA
+                    </span>
+                {% elif est == 'VENDIDO' %}
+                    <span style="font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 15px; background-color: #1e1b4b; color: #ffffff;">
+                        VENDIDO / ADQUIRIDO
+                    </span>
+                {% else %}
+                    <span style="font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 15px; background-color: #232551; color: #ffffff;">
+                        EN FASE DE DESARROLLO
+                    </span>
+                {% endif %}
 
-    {% if equipo %}
-        <ul class="team-list">
-            {% for miembro in equipo %}
-                <li>
-                    <strong>{{ miembro.nombre_desarrollador if miembro.nombre_desarrollador else 'Desarrollador' }}</strong>
-                    <span>{{ miembro.rol if miembro.rol else 'Colaborador' }}</span>
-                </li>
+                {% if proyecto.fecha_inicio %}
+                    <span style="font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 15px; background-color: #f1f5f9; color: #232551; border: 1px solid #cbd5e1;">
+                        Publicado: {{ proyecto.fecha_inicio }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{{ url_for('portafolio') }}" 
+           style="background-color: #232551; color: #ffffff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.85rem;">
+            Volver al Portafolio
+        </a>
+    </div>
+
+    {% set img_url = proyecto.imagen_url or proyecto.imagen_portada %}
+    <div style="position: relative; width: 100%; height: 350px; background: #232551; border-radius: 14px; overflow: hidden; margin-bottom: 25px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center;">
+        {% if img_url %}
+            <img id="main-detail-img" src="{{ url_for('static', filename='imagenes/' + img_url) }}" alt="{{ proyecto.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+            <span style="color: #cbd5e1; font-weight: 600; font-size: 0.95rem;">Sin imagen previa disponible</span>
+        {% endif %}
+    </div>
+
+    {% if proyecto.imagenes_paneles %}
+    <div style="margin-bottom: 25px;">
+        <h4 style="color: #232551; font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">Capturas de los Paneles</h4>
+        <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px;">
+            {% for panel in proyecto.imagenes_paneles %}
+            <img src="{{ url_for('static', filename='imagenes/' + panel) }}" onclick="document.getElementById('main-detail-img').src=this.src" 
+                 style="width: 100px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #232551; flex-shrink: 0;">
             {% endfor %}
-        </ul>
-    {% else %}
-        <div class="text-box-purple">No hay miembros registrados para este proyecto.</div>
+        </div>
+    </div>
     {% endif %}
 
-    <a href="{{ url_for('portafolio') }}" class="btn-arrow">Volver</a>
-
-    <div class="triangles-decoration">
-        <div class="triangle-up"></div>
-        <div class="triangle-down"></div>
+    <div style="margin-bottom: 25px;">
+        <h3 style="color: #232551; font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">
+            Descripción de la Aplicación
+        </h3>
+        <div style="color: #334155; font-size: 0.9rem; line-height: 1.5; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-weight: 500;">
+            {{ proyecto.descripcion or 'No hay detalles adicionales registrados.' }}
+        </div>
     </div>
+
+    <div style="margin-bottom: 15px;">
+        <h3 style="color: #232551; font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;">
+            Equipo Desarrollador Asignado
+        </h3>
+
+        {% if desarrolladores %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;">
+                {% for dev in desarrolladores %}
+                <div style="background: #ffffff; border: 1.5px solid #232551; padding: 12px 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                    
+                    {% if dev.rol_desempenado == 'LIDER' %}
+                        <div class="dev-avatar-lider" style="width: 40px; height: 40px; color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
+                            {{ dev.nombre_completo[0] if dev.nombre_completo else 'D' }}
+                        </div>
+                    {% else %}
+                        <div class="dev-avatar-dev" style="width: 40px; height: 40px; color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
+                            {{ dev.nombre_completo[0] if dev.nombre_completo else 'D' }}
+                        </div>
+                    {% endif %}
+                    
+                    <div>
+                        <strong style="display: block; color: #232551; font-size: 0.9rem;">
+                            {{ dev.nombre_completo or 'Programador' }}
+                            {% if dev.rol_desempenado == 'LIDER' %}
+                                <span style="font-size: 0.65rem; background: #5b21b6; color: #ffffff; padding: 2px 6px; border-radius: 6px; margin-left: 4px;">LÍDER</span>
+                            {% endif %}
+                        </strong>
+                        <span style="color: #64748b; font-size: 0.78rem; font-weight: 600;">{{ dev.especialidad or 'Desarrollador Software' }}</span>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; padding: 15px; border-radius: 10px; color: #64748b; font-size: 0.85rem; font-weight: 600;">
+                No hay desarrolladores asignados registrados para este proyecto.
+            </div>
+        {% endif %}
+    </div>
+
 </div>
 {% endblock %}

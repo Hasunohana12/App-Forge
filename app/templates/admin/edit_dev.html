@@ -1,47 +1,68 @@
 {% extends "base_dashboard.html" %}
 
 {% block content %}
-<div style="max-width: 550px; margin: 40px auto; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+<div style="max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 2px solid #232551;">
     
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">
-        <h2 style="margin: 0; color: #1e1b4b; font-size: 1.4rem; font-weight: 700;"> Editar Programador</h2>
-        <span style="background-color: #f3e8ff; color: #6b21a8; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;">ID #{{ dev.id_desarrollador }}</span>
+    <div style="text-align: center; margin-bottom: 25px;">
+        <span style="background-color: #232551; color: #ffffff; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; display: inline-block;">
+            Editar Programador #{{ dev.id_desarrollador }}
+        </span>
     </div>
 
     <form action="{{ url_for('admin_edit_dev', id_dev=dev.id_desarrollador) }}" method="POST">
         
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Nombre Completo</label>
-            <input type="text" name="nombre_completo" value="{{ dev.nombre_completo or dev.Nombre_completo }}" required 
-                   style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; transition: all 0.2s; color: #1e293b;"
-                   onfocus="this.style.borderColor='#5b21b6';" onblur="this.style.borderColor='#cbd5e1';">
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Nombre Completo</label>
+            <input type="text" name="nombre_completo" value="{{ dev.nombre_completo }}" required 
+                   style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Especialidad</label>
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Especialidad</label>
             <input type="text" name="especialidad" value="{{ dev.especialidad }}" required 
-                   style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; transition: all 0.2s; color: #1e293b;"
-                   onfocus="this.style.borderColor='#5b21b6';" onblur="this.style.borderColor='#cbd5e1';">
+                   style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
         </div>
 
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Correo Electrónico</label>
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Correo Electrónico</label>
             <input type="email" name="email" value="{{ dev.email }}" required 
-                   style="width: 100%; padding: 12px 15px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; transition: all 0.2s; color: #1e293b;"
-                   onfocus="this.style.borderColor='#5b21b6';" onblur="this.style.borderColor='#cbd5e1';">
+                   style="width: 100%; padding: 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
+        </div>
+
+        <div style="margin-bottom: 22px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #232551; margin-bottom: 6px;">Contraseña Acceso</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <input type="password" id="input-pass" name="contrasena" value="{{ dev.contrasena }}" required 
+                       style="width: 100%; padding: 12px 45px 12px 12px; font-size: 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; color: #1e293b;">
+                <button type="button" onclick="togglePassword()" 
+                        style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #232551; font-weight: 700; font-size: 0.8rem;">
+                    👁️
+                </button>
+            </div>
         </div>
 
         <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
             <a href="{{ url_for('admin_devs') }}" 
-               style="padding: 12px 20px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-radius: 10px; background-color: #f1f5f9; transition: background 0.2s;">
+               style="padding: 11px 18px; color: #64748b; text-decoration: none; font-size: 0.88rem; font-weight: 700; border-radius: 10px; background-color: #f1f5f9;">
                 Cancelar
             </a>
             <button type="submit" 
-                    style="padding: 12px 24px; background-color: #5b21b6; color: #ffffff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(91, 33, 182, 0.25); transition: background 0.2s;">
+                    style="padding: 11px 22px; background-color: #232551; color: #ffffff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer;">
                 Guardar Cambios
             </button>
         </div>
 
     </form>
 </div>
+
+<script>
+function togglePassword() {
+    const input = document.getElementById('input-pass');
+    if (input.type === 'password') {
+        input.type = 'text';
+    } else {
+        input.type = 'password';
+    }
+}
+</script>
 {% endblock %}

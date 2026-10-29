@@ -49,7 +49,7 @@
         </div>
 
         <div class="header-right-panel" style="display: flex; align-items: center; gap: 15px;">
-            <div class="role-pill-badge" style="background-color: #3b82f6; color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">
+            <div class="role-pill-badge" style="background-color: #bb3bf6; color: #ffffff; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">
                 {% if session.get('role') == 'admin' %}Administrador
                 {% elif session.get('role') == 'dev' %}Programador
                 {% elif session.get('role') == 'cliente' %}Cliente{% endif %}

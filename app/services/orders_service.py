@@ -86,7 +86,8 @@ def crear_solicitud_cliente(nombre, telefono, email, detalles_app):
         body_app = {
             "nombre": f"Solicitud: {nombre}",
             "descripcion": detalles_app or "Sin detalles especificados.",
-            "estado": "PENDIENTE",
+            "estado": "EN_DESARROLLO",
+            "estado_atencion": "PENDIENTE",  
             "es_publico_portafolio": False
         }
         if id_cliente:
