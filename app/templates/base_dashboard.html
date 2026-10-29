@@ -33,15 +33,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('cliente_dashboard') }}" style="color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
-                        Chat
-                    </a>
-                </li>
-                <li>
-                    <select name="estado_disponibilidad" id="dev-status-select" 
+                    <select name="estado_disponibilidad" id="dev-status-select" onchange="actualizarDisponibilidad(this.value)"
                             style="background-color: #5b21b6; color: #ffffff; border: 1px solid #7c3aed; border-radius: 20px; padding: 5px 12px; font-weight: 700; font-size: 0.82rem; cursor: pointer; outline: none;">
-                        <option value="disponible" selected> Disponible</option>
-                        <option value="ocupado"> Ocupado</option>
+                        <option value="true" {% if dev and dev.disponible %}selected{% endif %}>🟢 Disponible</option>
+                        <option value="false" {% if dev and not dev.disponible %}selected{% endif %}>🔴 Ocupado</option>
                     </select>
                 </li>
             </ul>
@@ -54,7 +49,7 @@
                 {% elif session.get('role') == 'dev' %}Programador
                 {% elif session.get('role') == 'cliente' %}Cliente{% endif %}
             </div>
-            <a href="{{ url_for('logout') }}" class="btn-logout-link" style="color: #f87171; border: 1px solid #f87171; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 700;">
+            <a href="{{ url_for('logout') }}" class="btn-logout-link" style="color: #d971f8; border: 1px solid #bb71f8; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 700;">
                 Cerrar Sesión
             </a>
         </div>
@@ -64,6 +59,41 @@
         {% block content %}{% endblock %}
     </main>
 
+    <script>
+    function actualizarDisponibilidad(valorStr) {
+        const esDisponible = (valorStr === 'true');
+        fetch('/api/dev/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ disponible: esDisponible })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.exito) {
+                const badge = document.getElementById('status-badge-indicator');
+                if (badge) {
+                    if (esDisponible) {
+                        badge.style.backgroundColor = '#d1fae5';
+                        badge.style.color = '#065f46';
+                        badge.innerText = '🟢 Disponible para Proyectos';
+                    } else {
+                        badge.style.backgroundColor = '#fee2e2';
+                        badge.style.color = '#991b1b';
+                        badge.innerText = 'Ocupado';
+                    }
+                }
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Estado actualizado correctamente',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        });
+    }
+    </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>

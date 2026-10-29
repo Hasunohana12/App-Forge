@@ -3,23 +3,29 @@
 {% block content %}
 <div style="max-width: 950px; margin: 30px auto; padding: 0 20px;">
     
-    <div style="background: #ffffff; border-radius: 16px; padding: 20px 25px; margin-bottom: 25px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 25px; margin-bottom: 25px; border: 1.5px solid #232551; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
         <div>
-            <h2 style="margin: 0 0 5px 0; color: #1e293b; font-size: 1.25rem;">Panel de Programador</h2>
-            <p style="margin: 0; color: #64748b; font-size: 0.85rem;">Gestiona tus asignaciones y estado en tiempo real.</p>
+            <h2 style="margin: 0 0 5px 0; color: #232551; font-size: 1.25rem; font-weight: 800;">Panel de Programador</h2>
+            <p style="margin: 0; color: #64748b; font-size: 0.85rem; font-weight: 600;">Bienvenido/a <strong>{{ dev.nombre_completo if dev else 'Programador' }}</strong> ({{ dev.especialidad if dev else 'Dev' }})</p>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 0.85rem; font-weight: 600; color: #475569;">Mi Estado:</span>
-            <span style="background-color: #d1fae5; color: #065f46; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
-                🟢 Disponible para Proyectos
-            </span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #232551;">Mi Estado:</span>
+            {% if dev and dev.disponible %}
+                <span id="status-badge-indicator" style="background-color: #d1fae5; color: #065f46; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                    🟢 Disponible para Proyectos
+                </span>
+            {% else %}
+                <span id="status-badge-indicator" style="background-color: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                     Ocupado
+                </span>
+            {% endif %}
         </div>
     </div>
 
-    <div style="background: #ffffff; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-        
+    <div style="background: #ffffff; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1.5px solid #232551;">
+       
         <div style="text-align: center; margin-bottom: 25px;">
-            <span style="background-color: #5b21b6; color: #ffffff; padding: 10px 28px; border-radius: 25px; font-weight: 700; font-size: 1.1rem; display: inline-block;">
+            <span style="background-color: #5b21b6; color: #ffffff; padding: 10px 28px; border-radius: 25px; font-weight: 800; font-size: 1.1rem; display: inline-block;">
                 Mis Proyectos Asignados
             </span>
         </div>
@@ -27,10 +33,10 @@
         {% if mis_proyectos %}
             <div style="display: flex; flex-direction: column; gap: 18px;">
                 {% for proj in mis_proyectos %}
-                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 22px;">
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 22px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="margin: 0; color: #1e293b; font-size: 1.15rem; font-weight: 700;">{{ proj.nombre }}</h3>
-                        <span style="background-color: #d1fae5; color: #065f46; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 12px;">
+                        <h3 style="margin: 0; color: #232551; font-size: 1.15rem; font-weight: 800;">{{ proj.nombre }}</h3>
+                        <span style="background-color: #d1fae5; color: #065f46; font-size: 0.75rem; font-weight: 800; padding: 4px 12px; border-radius: 12px;">
                             {{ proj.estado or 'EN DESARROLLO' }}
                         </span>
                     </div>
@@ -39,19 +45,21 @@
                         {{ proj.descripcion or 'Sin detalles adicionales.' }}
                     </p>
 
-                    <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 0.85rem; color: #64748b; background: #ffffff; padding: 10px 15px; border-radius: 8px; border: 1px solid #f1f5f9;">
-                        <div><strong style="color: #475569;">Rol:</strong> {{ proj.rol_asignado or 'Fullstack' }}</div>
-                        <div><strong style="color: #475569;">Horas Estimadas:</strong> {{ proj.horas_dedicadas or 0 }}h</div>
-                        {% if proj.cliente %}
-                            <div><strong style="color: #475569;">Cliente:</strong> {{ proj.cliente.nombre }} ({{ proj.cliente.email }})</div>
-                        {% endif %}
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 0.85rem; color: #64748b; background: #ffffff; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div><strong style="color: #232551;">Rol Asignado:</strong> {{ proj.rol_asignado or 'DESARROLLADOR' }}</div>
+                        <div><strong style="color: #232551;">Horas Diarias Estimadas:</strong> {{ proj.horas_dedicadas or 4 }}h/día</div>
+                        <div>
+                            <a href="{{ url_for('portafolio_detalle', id_app=proj.id_app) }}" target="_blank" style="color: #5b21b6; font-weight: 700; text-decoration: none;">
+                                Ver Detalle del Proyecto
+                            </a>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div style="text-align: center; color: #64748b; padding: 45px 20px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
-                <p style="margin: 0 0 8px 0; font-size: 1rem; font-weight: 600; color: #475569;">No tienes proyectos asignados actualmente.</p>
+            <div style="text-align: center; color: #64748b; padding: 45px 20px; background: #f8fafc; border-radius: 12px; border: 1.5px dashed #cbd5e1;">
+                <p style="margin: 0 0 8px 0; font-size: 1rem; font-weight: 700; color: #232551;">No tienes proyectos asignados actualmente.</p>
                 <p style="margin: 0; font-size: 0.85rem;">Cuando el administrador te asigne una solicitud, aparecerá listada en esta sección.</p>
             </div>
         {% endif %}

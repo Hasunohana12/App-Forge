@@ -34,7 +34,8 @@ from app.services.dev_service import (
     obtener_desarrollador_por_credenciales,
     obtener_desarrollador_por_id,
     actualizar_desarrollador,
-    eliminar_desarrollador
+    eliminar_desarrollador,
+    cambiar_estado_disponibilidad
 )
 from app.services.projects_service import (
     obtener_portafolio_publico,

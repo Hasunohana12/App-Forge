@@ -16,16 +16,7 @@ def obtener_desarrolladores():
     try:
         url = f"{BASE_URL}/desarrollador?select=*"
         response = requests.get(url, headers=HEADERS)
-        
-        print("=== DEBUG SUPABASE GET ===")
-        print("URL:", url)
-        print("STATUS CODE:", response.status_code)
-        print("RESPONSE TEXT:", response.text)
-        print("=========================")
-
-        if response.status_code == 200:
-            return response.json()
-        return []
+        return response.json() if response.status_code == 200 else []
     except Exception as e:
         print(f"Error en obtener_desarrolladores: {e}")
         return []
@@ -51,9 +42,34 @@ def asignar_dev_a_proyecto(id_app, id_dev, rol="DESARROLLADOR", horas_estimadas_
         return False
 
 def obtener_proyectos_por_dev(id_desarrollador):
-    url = f"{BASE_URL}/desarrolladorpordetalle?select=rol,horas_dedicadas,aplicacion(nombre,estado)&id_desarrollador=eq.{id_desarrollador}"
-    response = requests.get(url, headers=HEADERS)
-    return response.json() if response.status_code == 200 else []
+    try:
+        url = f"{BASE_URL}/desarrollador_aplicacion?id_desarrollador=eq.{id_desarrollador}&select=rol_desempenado,horas_estimadas_dia,aplicacion(*)"
+        response = requests.get(url, headers=HEADERS)
+        
+        if response.status_code == 200:
+            relaciones = response.json()
+            proyectos = []
+            for rel in relaciones:
+                app_data = rel.get('aplicacion')
+                if app_data:
+                    app_data['rol_asignado'] = rel.get('rol_desempenado', 'DESARROLLADOR')
+                    app_data['horas_dedicadas'] = rel.get('horas_estimadas_dia', 4)
+                    proyectos.append(app_data)
+            return proyectos
+        return []
+    except Exception as e:
+        print(f"Error al obtener proyectos por dev: {e}")
+        return []
+
+def cambiar_estado_disponibilidad(id_dev, esta_disponible):
+    try:
+        url = f"{BASE_URL}/desarrollador?id_desarrollador=eq.{id_dev}"
+        body = {"disponible": bool(esta_disponible)}
+        res = requests.patch(url, json=body, headers=HEADERS)
+        return res.status_code in (200, 204)
+    except Exception as e:
+        print(f"Error al cambiar disponibilidad: {e}")
+        return False
 
 def crear_nuevo_desarrollador(nombre_completo, especialidad, email, contrasena=None):
     body = {
@@ -68,11 +84,9 @@ def crear_nuevo_desarrollador(nombre_completo, especialidad, email, contrasena=N
         body["contrasena"] = contrasena
 
     response = requests.post(f"{BASE_URL}/desarrollador", json=body, headers=HEADERS)
-    
     if response.status_code not in (200, 201):
         print(f"Error al registrar en Supabase ({response.status_code}): {response.text}")
         return None
-        
     return response.json()
 
 def obtener_desarrollador_por_credenciales(email, password):
